@@ -1,0 +1,1368 @@
+# MASTER PROJECT PROMPT: COMPLETE PAKISTANI MOBILE PHONE E-COMMERCE WEBSITE
+
+## YOUR ROLE
+
+Act as an expert full-stack software engineer, e-commerce architect, UI/UX designer, database administrator, cybersecurity engineer and payment integration specialist.
+
+Build a complete, production-ready mobile phone selling e-commerce platform for the Pakistani market.
+
+This must be a real, functional e-commerce application, not just a homepage, visual prototype or static demonstration.
+
+The application must include:
+
+1. A premium customer-facing shopping website.
+2. A complete, secure administrator dashboard.
+3. A working backend and database.
+4. Product and inventory management.
+5. Shopping cart and checkout.
+6. Order management.
+7. WhatsApp integration.
+8. JazzCash and Easypaisa payment options.
+9. Pakistani bank transfer support.
+10. Promotions, deals, coupons and giveaways.
+11. Customer accounts and order tracking.
+12. Cloudflare R2 file storage.
+13. Secure authentication and access control.
+14. Website content and branding management.
+
+Build the application in a maintainable, scalable architecture.
+
+Do not stop after creating the frontend. Implement the database, backend, authentication, storage and complete shopping workflow.
+
+---
+
+# 1. TECHNOLOGY STACK
+
+Use the following architecture:
+
+### Frontend
+- React.
+- TypeScript.
+- Responsive modern CSS or Tailwind CSS.
+- Reusable UI components.
+- Mobile-first design.
+- Accessible navigation and forms.
+
+### Backend and database
+- Supabase PostgreSQL database.
+- Supabase Authentication.
+- Supabase Row Level Security.
+- Supabase Edge Functions or a secure server-side backend.
+- Secure server-side business logic.
+
+### File and image storage
+Use Cloudflare R2 as the primary file storage provider.
+
+IMPORTANT: Do not use Supabase Storage as the primary storage system.
+
+Use Cloudflare R2 for:
+- Product images.
+- Product gallery images.
+- Store logos.
+- Homepage banners.
+- Brand logos.
+- Promotional graphics.
+- Giveaway images.
+- Payment receipts.
+- Other uploaded documents.
+
+### Other integrations
+- WhatsApp click-to-chat.
+- Official payment gateway integrations when credentials are available.
+- Courier API integrations when credentials are available.
+- Gemini API for optional AI-powered assistance.
+
+The architecture must be modular so that storage providers, payment providers and delivery providers can be changed later without rebuilding the whole website.
+
+---
+
+# 2. STORAGE ARCHITECTURE: CLOUDFLARE R2
+
+Cloudflare R2 must be the primary object storage service.
+
+Do not store uploaded images or documents as binary data inside PostgreSQL.
+
+Store the file itself in Cloudflare R2 and store its metadata and object key in Supabase.
+
+### Cloudflare R2 integration
+
+Use the S3-compatible API.
+
+Create a secure server-side storage service.
+
+All R2 credentials must remain on the server.
+
+Required environment variables:
+
+- R2_ACCOUNT_ID
+- R2_ACCESS_KEY_ID
+- R2_SECRET_ACCESS_KEY
+- R2_BUCKET_NAME
+- R2_PUBLIC_BASE_URL
+
+Never expose these values in frontend JavaScript, browser requests or public source files.
+
+### Storage folder organisation
+
+Use a structured folder system:
+
+- products/
+- product-gallery/
+- logos/
+- banners/
+- brands/
+- promotions/
+- giveaways/
+- payment-receipts/
+- customer-uploads/
+
+### Upload functionality
+
+Build a complete drag-and-drop upload system in the admin dashboard.
+
+Administrators must be able to:
+
+- Drag files into upload areas.
+- Browse files from their device.
+- Upload multiple images.
+- Preview uploaded images.
+- Crop images.
+- Resize images.
+- Replace images.
+- Delete images.
+- Reorder product gallery images.
+- Set a primary product image.
+- See upload progress.
+- See upload errors.
+- Retry failed uploads.
+
+Validate file type and size on the server.
+
+Allow only approved image formats such as JPG, JPEG, PNG, WebP and SVG where safe.
+
+Do not accept executable files.
+
+### Storage optimisation
+
+- Compress images where appropriate.
+- Generate responsive image sizes.
+- Generate thumbnails.
+- Use WebP or AVIF where supported.
+- Avoid uploading unnecessarily large images.
+- Use caching for public product images.
+- Protect private payment receipts from public access.
+- Use secure signed URLs for private files.
+
+### Storage management
+
+Create a storage section in the admin dashboard showing:
+
+- Total stored data.
+- Number of files.
+- File categories.
+- Largest files.
+- Recent uploads.
+- Failed uploads.
+- Storage configuration status.
+
+Allow administrators to delete unused files safely.
+
+Never delete an image that is still referenced by an active product or other website content without confirmation.
+
+### Important
+
+If Cloudflare R2 credentials are missing, show a clear configuration warning.
+
+Never pretend that an upload succeeded when it did not.
+
+Do not fall back silently to Supabase Storage.
+
+---
+
+# 3. BRANDING AND WEBSITE IDENTITY
+
+Create a premium electronics retail brand experience.
+
+Use a clean, modern, professional design inspired by leading international electronics stores.
+
+Design style:
+
+- Premium black and white foundation.
+- Elegant accent colour.
+- Modern typography.
+- Professional product cards.
+- High-quality product photography.
+- Clear shopping buttons.
+- Smooth but lightweight animations.
+- Responsive layouts.
+- Fast loading.
+- Clean navigation.
+- Attractive promotional banners.
+
+The store branding must be editable from the admin dashboard.
+
+Allow the administrator to configure:
+
+- Store name.
+- Store logo.
+- Favicon.
+- Tagline.
+- Brand colours.
+- Contact number.
+- WhatsApp number.
+- Email.
+- Business address.
+- Social media links.
+- Footer information.
+
+The logo must be uploaded using drag-and-drop functionality.
+
+Never hard-code the store name or logo permanently.
+
+---
+
+# 4. HOMEPAGE
+
+Create a complete professional homepage.
+
+Include:
+
+1. Announcement bar.
+2. Header with uploaded store logo.
+3. Navigation menu.
+4. Product search.
+5. Customer account icon.
+6. Wishlist icon.
+7. Shopping cart with live item count.
+8. WhatsApp support button.
+9. Hero banner.
+10. Featured products.
+11. Latest arrivals.
+12. Best-selling phones.
+13. Special offers.
+14. Flash deals with countdown timers.
+15. Shop by brand.
+16. Shop by price.
+17. New and used phones.
+18. PTA-approved phones.
+19. Accessories.
+20. Giveaway campaigns.
+21. Customer reviews.
+22. Why shop with us.
+23. Delivery and payment information.
+24. Newsletter subscription.
+25. Professional footer.
+
+The administrator must be able to rearrange homepage sections, enable or disable sections, upload banners and edit content from the backend.
+
+---
+
+# 5. PRODUCT CATEGORIES AND BRANDS
+
+Create the following categories:
+
+- New Mobile Phones.
+- Used Mobile Phones.
+- Box-Packed Phones.
+- PTA-Approved Phones.
+- Non-PTA Phones.
+- Accessories.
+- Chargers.
+- Cables.
+- Earbuds.
+- Headphones.
+- Smartwatches.
+- Phone Covers.
+- Screen Protectors.
+
+Add initial brands:
+
+- Apple.
+- Samsung.
+- Xiaomi.
+- Redmi.
+- Vivo.
+- Oppo.
+- Realme.
+- Infinix.
+- Tecno.
+- Google Pixel.
+- OnePlus.
+- Motorola.
+- Other brands.
+
+Allow administrators to create, edit, hide and delete brands and categories.
+
+Each brand must support an uploaded logo.
+
+---
+
+# 6. PRODUCT MANAGEMENT
+
+Build a full product management system.
+
+Every product must support:
+
+- Product name.
+- Brand.
+- Model.
+- SKU.
+- Category.
+- Multiple images.
+- Image gallery.
+- Main product image.
+- Product description.
+- Technical specifications.
+- Original price.
+- Selling price.
+- Discount.
+- Available stock.
+- RAM.
+- Storage.
+- Colour.
+- Condition.
+- PTA status.
+- Warranty.
+- Delivery information.
+- Featured status.
+- Best-seller status.
+- New-arrival status.
+- Published or unpublished status.
+
+### Product condition options
+
+- Brand new.
+- Box packed.
+- Used.
+- Refurbished.
+
+### PTA options
+
+- PTA approved.
+- Non-PTA.
+- PTA status not applicable.
+- To be verified.
+
+### Product administration
+
+Administrators must be able to:
+
+- Add products.
+- Edit products.
+- Duplicate products.
+- Delete products.
+- Publish and unpublish products.
+- Update prices.
+- Update stock.
+- Upload and reorder images.
+- Manage product variants.
+- Mark products as featured.
+- Manage discounts.
+- Import and export products using CSV.
+
+Never show unavailable products as available.
+
+---
+
+# 7. PRODUCT DETAILS PAGE
+
+Create a premium product page containing:
+
+- Product name.
+- Brand.
+- Product image gallery.
+- Image zoom.
+- Image thumbnails.
+- Price.
+- Original price.
+- Discount percentage.
+- Savings amount.
+- Stock availability.
+- RAM.
+- Storage.
+- Colour.
+- Condition.
+- PTA status.
+- Warranty.
+- Technical specifications.
+- Delivery information.
+- Customer reviews.
+
+Provide the following buttons:
+
+- Add to Cart.
+- Buy Now.
+- Add to Wishlist.
+- Order on WhatsApp.
+- Contact Support.
+
+Display related products and recently viewed products.
+
+---
+
+# 8. ADVANCED SEARCH AND FILTERING
+
+Build a fast search system with live suggestions.
+
+Search by:
+
+- Product name.
+- Brand.
+- Model.
+- SKU.
+
+Filters:
+
+- Brand.
+- Price range.
+- RAM.
+- Storage.
+- Colour.
+- Condition.
+- PTA status.
+- Availability.
+- Discount.
+
+Sorting:
+
+- Price low to high.
+- Price high to low.
+- Newest.
+- Best-selling.
+- Most popular.
+- Highest discount.
+
+All filters must work with real database data.
+
+---
+
+# 9. SHOPPING CART
+
+Build a fully functional shopping cart.
+
+Customers must be able to:
+
+- Add products.
+- Remove products.
+- Update quantities.
+- View item prices.
+- View subtotal.
+- Apply coupons.
+- See discounts.
+- Calculate delivery charges.
+- View final payable amount.
+- Continue shopping.
+- Proceed to checkout.
+
+The cart must update correctly across navigation and refreshes.
+
+For logged-in customers, persist the cart securely.
+
+For guest customers, support a suitable guest cart.
+
+Validate stock and prices again on the server during checkout.
+
+Prevent overselling and duplicate order submissions.
+
+---
+
+# 10. CHECKOUT AND ORDER PLACEMENT
+
+Allow guest checkout without requiring account registration.
+
+Collect:
+
+- Full name.
+- Mobile number.
+- WhatsApp number.
+- Email address (optional).
+- Complete delivery address.
+- City.
+- Province.
+- Postal code (optional).
+- Delivery instructions.
+
+Payment selection must be available at checkout.
+
+After order submission:
+
+1. Generate a unique order number.
+2. Save the order in Supabase.
+3. Save order items and price snapshots.
+4. Reserve or deduct stock safely.
+5. Record selected payment method.
+6. Record payment status.
+7. Show order confirmation.
+8. Display payment instructions if required.
+9. Offer a WhatsApp order confirmation link.
+10. Provide order tracking.
+
+Use database transactions or equivalent safe server-side logic for order placement and stock updates.
+
+Do not show a successful order confirmation until the order has actually been saved.
+
+---
+
+# 11. PAYMENT METHODS FOR PAKISTAN
+
+Support the following payment options:
+
+1. Cash on Delivery.
+2. JazzCash.
+3. Easypaisa.
+4. Bank Transfer.
+5. Additional configurable payment methods.
+
+## JazzCash
+
+Create an admin settings page for:
+
+- Account title.
+- Account number.
+- Mobile number.
+- Payment instructions.
+- QR code.
+- Enable or disable option.
+
+## Easypaisa
+
+Create an admin settings page for:
+
+- Account title.
+- Account number.
+- Mobile number.
+- Payment instructions.
+- QR code.
+- Enable or disable option.
+
+## Pakistani bank transfers
+
+Allow administrators to add multiple bank accounts.
+
+Support configurable details for banks including:
+
+- HBL.
+- UBL.
+- Meezan Bank.
+- MCB.
+- Allied Bank.
+- Bank Alfalah.
+- Faysal Bank.
+- Bank of Punjab.
+- Standard Chartered Pakistan.
+- Other Pakistani banks.
+
+Each bank account must have:
+
+- Bank name.
+- Bank logo.
+- Account title.
+- Account number.
+- IBAN.
+- Branch name.
+- Payment instructions.
+- Enabled or disabled status.
+
+Allow the administrator to add, edit, remove and reorder bank accounts.
+
+### Manual payment verification
+
+For manual transfers:
+
+- Display payment instructions at checkout.
+- Allow customers to upload a payment receipt.
+- Save the receipt privately in Cloudflare R2.
+- Save receipt metadata in Supabase.
+- Show pending receipts in the admin dashboard.
+- Allow administrators to approve or reject payment.
+- Record verification date and administrator.
+- Allow administrators to add rejection notes.
+
+### Real payment gateway integration
+
+Integrate official JazzCash or Easypaisa APIs only when merchant credentials and official API documentation are supplied.
+
+Never simulate payment success.
+
+Never treat an uploaded screenshot as automatically verified payment.
+
+Payment statuses:
+
+- Pending.
+- Awaiting Verification.
+- Paid.
+- Failed.
+- Refunded.
+
+Use server-side verification and secure webhook handling where supported.
+
+---
+
+# 12. WHATSAPP INTEGRATION
+
+WhatsApp is a major feature of this store.
+
+Create:
+
+- Floating WhatsApp button.
+- WhatsApp button on product pages.
+- WhatsApp button in the cart.
+- WhatsApp order option at checkout.
+- WhatsApp customer support.
+- WhatsApp order confirmation links.
+
+The administrator must be able to change the WhatsApp number from the backend.
+
+When a customer selects WhatsApp ordering, prepare a message containing:
+
+- Customer name, if supplied.
+- Product name.
+- Model.
+- Quantity.
+- Price.
+- Order number, if available.
+- Product or order link.
+
+For multiple products, include the complete cart summary.
+
+Use official WhatsApp click-to-chat links.
+
+Do not claim messages are automatically sent through WhatsApp unless the official WhatsApp Business API has been configured and tested.
+
+---
+
+# 13. DEALS, DISCOUNTS AND PROMOTIONS
+
+Build a complete promotions management system.
+
+Allow administrators to create:
+
+- Percentage discounts.
+- Fixed-amount discounts.
+- Product-specific discounts.
+- Brand discounts.
+- Category discounts.
+- Bundle offers.
+- Buy-one-get-one offers.
+- Flash sales.
+- Weekend deals.
+- Seasonal offers.
+- Free delivery promotions.
+- Coupon codes.
+
+Each campaign must have:
+
+- Title.
+- Description.
+- Banner image.
+- Start date.
+- End date.
+- Start time.
+- End time.
+- Eligible products.
+- Discount value.
+- Minimum order amount.
+- Maximum discount.
+- Usage limit.
+- Active/inactive status.
+
+Display discount countdowns when applicable.
+
+Validate every coupon and promotional rule on the server.
+
+Never trust discount values submitted by the browser.
+
+---
+
+# 14. GIVEAWAYS
+
+Create a dedicated Giveaways page.
+
+Administrators can:
+
+- Create giveaway campaigns.
+- Upload product images.
+- Add descriptions.
+- Define start and end dates.
+- Add eligibility conditions.
+- Set entry limits.
+- Publish giveaway rules.
+- Close campaigns.
+- Select winners.
+- Publish winner announcements.
+
+Customers can enter using:
+
+- Full name.
+- Mobile number.
+- Email (optional).
+- Other required information.
+
+Prevent duplicate entries and abuse.
+
+Record giveaway entries in the database.
+
+Maintain transparent selection records and clear campaign rules.
+
+Ensure giveaway campaigns comply with applicable Pakistani laws.
+
+Do not require purchases to enter unless the campaign has been legally reviewed.
+
+---
+
+# 15. CUSTOMER ACCOUNTS
+
+Create customer registration and login.
+
+Customer features:
+
+- Register.
+- Login.
+- Logout.
+- Password reset.
+- Edit profile.
+- Save addresses.
+- View order history.
+- Track orders.
+- View payment status.
+- Request cancellation.
+- View wishlist.
+- Submit product reviews.
+- Contact support.
+
+Allow guest checkout.
+
+Protect customer data so customers can only access their own information.
+
+---
+
+# 16. ORDER TRACKING
+
+Create a dedicated Track Order page.
+
+Customers can enter:
+
+- Order number.
+- Phone number or other verification detail.
+
+Display the verified order status.
+
+Order statuses:
+
+1. New Order.
+2. Confirmed.
+3. Processing.
+4. Dispatched.
+5. Out for Delivery.
+6. Delivered.
+7. Cancelled.
+8. Returned.
+
+Show a chronological tracking timeline.
+
+Record status changes with timestamps.
+
+Do not expose private customer information through publicly guessable order numbers.
+
+---
+
+# 17. SHIPPING AND DELIVERY
+
+Build a Pakistan-focused delivery management system.
+
+Allow administrators to configure:
+
+- Standard delivery charges.
+- City-specific delivery charges.
+- Province-specific delivery charges.
+- Free delivery threshold.
+- Estimated delivery time.
+- Courier company.
+- Tracking number.
+- Shipment status.
+- Delivery notes.
+
+Allow manual courier tracking initially.
+
+Add API integrations only when official courier credentials and documentation are available.
+
+---
+
+# 18. ADMINISTRATOR AUTHENTICATION
+
+Create a separate secure administrator login page.
+
+Initial administrator email:
+
+ibsslayer@gmail.com
+
+Create the initial administrator using a secure server-side setup process.
+
+Do not hard-code the password 2026 into source code or frontend configuration.
+
+Use a secure temporary password through a protected environment variable or an administrator invitation process.
+
+Require the administrator to change the temporary password on first login.
+
+Security requirements:
+
+- Supabase Authentication or equivalent secure authentication.
+- Secure password hashing through the authentication provider.
+- Password reset.
+- Session management.
+- Role-based permissions.
+- Secure logout.
+- Optional two-factor authentication.
+- Rate limiting.
+- Login activity logging.
+
+Never create a hidden admin bypass.
+
+Never expose administrator credentials in browser code.
+
+---
+
+# 19. COMPLETE ADMIN DASHBOARD
+
+Create a professional, easy-to-use admin dashboard.
+
+Use a sidebar navigation system.
+
+### Dashboard overview
+
+Display:
+
+- Total orders.
+- Today's orders.
+- Pending orders.
+- Completed orders.
+- Cancelled orders.
+- Total sales.
+- Monthly revenue.
+- Total customers.
+- Total products.
+- Low-stock products.
+- Out-of-stock products.
+- Pending payment verifications.
+
+Add daily, weekly and monthly sales charts.
+
+### Order management
+
+Allow administrators to:
+
+- View all orders.
+- Search orders.
+- Filter by date.
+- Filter by customer.
+- Filter by phone number.
+- Filter by payment method.
+- Filter by status.
+- View complete order details.
+- Update order status.
+- Confirm payments.
+- Cancel orders.
+- Add internal notes.
+- Print invoices.
+- Export reports.
+
+### Product management
+
+Allow administrators to:
+
+- Add products.
+- Edit products.
+- Delete products.
+- Duplicate products.
+- Manage categories.
+- Manage brands.
+- Update prices.
+- Update stock.
+- Upload images.
+- Import and export CSV.
+
+### Inventory management
+
+Include:
+
+- Stock quantity.
+- Stock adjustment.
+- Low-stock alerts.
+- Out-of-stock alerts.
+- Inventory history.
+- Product availability.
+
+### Customer management
+
+Allow administrators to:
+
+- View customer records.
+- Search customers.
+- View order history.
+- View customer contact information.
+- Add internal notes.
+- Manage customer accounts.
+
+### Payment management
+
+Allow administrators to:
+
+- Configure payment methods.
+- Update JazzCash details.
+- Update Easypaisa details.
+- Add bank accounts.
+- Edit bank accounts.
+- Upload payment QR codes.
+- Review receipts.
+- Approve payments.
+- Reject payments.
+- View payment history.
+
+### Website management
+
+Allow administrators to change:
+
+- Store logo.
+- Favicon.
+- Homepage banners.
+- Product images.
+- Brand logos.
+- Promotional graphics.
+- Giveaway images.
+- Contact details.
+- WhatsApp number.
+- Social media links.
+- Footer information.
+- Delivery information.
+- About Us content.
+- Privacy policy.
+- Return policy.
+- Terms and conditions.
+
+All changes must be saved to the database or object storage and displayed on the live website.
+
+---
+
+# 20. VISUAL DRAG-AND-DROP CONTENT MANAGEMENT
+
+Create a user-friendly media manager.
+
+Include:
+
+- Drag-and-drop uploads.
+- Multiple file uploads.
+- File previews.
+- Image cropping.
+- Image replacement.
+- Image deletion.
+- Image reordering.
+- Folder organisation.
+- Search by file name.
+- File metadata.
+- Upload progress.
+- Storage usage.
+
+Use Cloudflare R2 for the actual file storage.
+
+Allow the administrator to upload the store logo and replace it at any time without editing code.
+
+Build an optional homepage section manager that allows administrators to reorder homepage sections using drag-and-drop.
+
+---
+
+# 21. REPORTS AND ANALYTICS
+
+Build an analytics section showing:
+
+- Daily sales.
+- Weekly sales.
+- Monthly sales.
+- Annual sales.
+- Total revenue.
+- Order count.
+- Average order value.
+- Best-selling products.
+- Best-performing brands.
+- Low-stock items.
+- Payment method breakdown.
+- Order cancellation rate.
+
+Allow export to CSV.
+
+Clearly distinguish revenue from pending payments, cancelled orders and refunded payments.
+
+---
+
+# 22. DATABASE STRUCTURE
+
+Create a properly related PostgreSQL database.
+
+Include tables for:
+
+- profiles.
+- user_roles.
+- customers.
+- customer_addresses.
+- products.
+- product_variants.
+- product_images.
+- brands.
+- categories.
+- inventory.
+- inventory_movements.
+- carts.
+- cart_items.
+- orders.
+- order_items.
+- payments.
+- payment_receipts.
+- payment_methods.
+- bank_accounts.
+- shipping_methods.
+- shipments.
+- coupons.
+- promotions.
+- promotion_products.
+- giveaways.
+- giveaway_entries.
+- giveaway_winners.
+- reviews.
+- wishlists.
+- wishlist_items.
+- website_settings.
+- media_assets.
+- admin_activity_logs.
+
+Use proper foreign keys, indexes, constraints and timestamps.
+
+Store monetary values using an appropriate decimal or integer representation.
+
+Store prices in PKR.
+
+Save order item price snapshots so historical invoices remain correct even if a product's current price changes.
+
+Create appropriate Row Level Security policies.
+
+Customers must only access their own private data.
+
+Only authorised administrators may access management operations.
+
+Use server-side operations for sensitive actions.
+
+---
+
+# 23. SECURITY
+
+Security is mandatory.
+
+Implement:
+
+- Secure authentication.
+- Role-based authorisation.
+- Database Row Level Security.
+- Server-side price validation.
+- Server-side stock validation.
+- Secure payment verification.
+- Protected file uploads.
+- Secure private receipt access.
+- Rate limiting.
+- Input validation.
+- Protection against SQL injection.
+- Protection against cross-site scripting.
+- Safe session handling.
+- Administrative activity logs.
+- Secure environment variables.
+- Proper error handling.
+
+Never expose:
+
+- Supabase service-role key.
+- Cloudflare R2 secret key.
+- Payment gateway secrets.
+- Administrator passwords.
+- Private customer information.
+
+Do not use public write permissions for storage buckets.
+
+---
+
+# 24. SEO AND PERFORMANCE
+
+Implement:
+
+- SEO-friendly URLs.
+- Product meta titles.
+- Product meta descriptions.
+- Open Graph tags.
+- Product structured data.
+- XML sitemap.
+- Robots.txt.
+- Image compression.
+- Lazy loading.
+- Responsive images.
+- Fast page navigation.
+- Accessible forms.
+- Mobile performance optimisation.
+
+Use PKR / Rs. as the store currency.
+
+Use Pakistan as the default country.
+
+Use Pakistani provinces and cities in address forms.
+
+---
+
+# 25. REQUIRED WEBSITE PAGES
+
+Build these pages:
+
+1. Home.
+2. Shop All.
+3. Product Categories.
+4. Brands.
+5. Product Details.
+6. Deals and Offers.
+7. Flash Sales.
+8. Giveaways.
+9. Shopping Cart.
+10. Checkout.
+11. Order Confirmation.
+12. Track Order.
+13. Customer Login.
+14. Customer Registration.
+15. My Account.
+16. My Orders.
+17. Wishlist.
+18. About Us.
+19. Contact Us.
+20. FAQs.
+21. Delivery Information.
+22. Returns and Refunds.
+23. Privacy Policy.
+24. Terms and Conditions.
+25. Admin Login.
+26. Admin Dashboard.
+
+---
+
+# 26. IMPORTANT FUNCTIONALITY RULES
+
+Every visible button must work.
+
+Every form must validate its inputs.
+
+Every product must load from the database.
+
+Every order must be stored in the database.
+
+Every price must be verified server-side.
+
+Every stock update must be consistent.
+
+Every admin action must check permissions.
+
+Every upload must use Cloudflare R2.
+
+Every payment must have a genuine status.
+
+Every external integration must clearly show whether it is configured or not.
+
+Do not create fake:
+- Orders.
+- Payment confirmations.
+- Reviews.
+- Customer accounts.
+- Giveaway winners.
+- Inventory records.
+- Sales statistics.
+
+Use clearly labelled sample data only during development.
+
+Remove sample data before production deployment.
+
+---
+
+# 27. DEVELOPMENT AND IMPLEMENTATION PLAN
+
+Build the project in these stages.
+
+### Stage 1: Application foundation
+- React and TypeScript setup.
+- Responsive website design.
+- Navigation.
+- Homepage.
+- Product listing.
+- Product details.
+- Main website pages.
+
+### Stage 2: Backend foundation
+- Supabase database.
+- Authentication.
+- Administrator roles.
+- Database schema.
+- Row Level Security.
+
+### Stage 3: Cloudflare R2
+- Secure R2 connection.
+- Image upload.
+- Drag-and-drop media manager.
+- Product gallery.
+- Logo and banner management.
+- Private payment receipt uploads.
+
+### Stage 4: Admin dashboard
+- Dashboard overview.
+- Product management.
+- Brand management.
+- Category management.
+- Inventory.
+- Website settings.
+
+### Stage 5: Shopping system
+- Cart.
+- Checkout.
+- Guest checkout.
+- Customer accounts.
+- Order creation.
+- Order history.
+- Order tracking.
+
+### Stage 6: Payment system
+- Cash on Delivery.
+- JazzCash instructions.
+- Easypaisa instructions.
+- Bank transfer management.
+- Payment receipt upload.
+- Admin payment verification.
+- Official gateway integration when credentials are available.
+
+### Stage 7: WhatsApp
+- Product WhatsApp ordering.
+- Cart WhatsApp ordering.
+- Order WhatsApp links.
+- Customer support.
+
+### Stage 8: Promotions
+- Coupons.
+- Discounts.
+- Flash deals.
+- Promotions.
+- Giveaways.
+
+### Stage 9: Delivery and reporting
+- Shipping configuration.
+- Courier tracking.
+- Sales analytics.
+- Reports.
+- CSV export.
+
+### Stage 10: Testing and deployment
+- Security testing.
+- Mobile testing.
+- Checkout testing.
+- Payment verification testing.
+- Storage testing.
+- Performance optimisation.
+- Deployment documentation.
+
+---
+
+# 28. FINAL ACCEPTANCE TESTS
+
+Do not declare the project complete until the following workflows have been tested.
+
+### Store setup test
+1. Administrator logs in.
+2. Administrator uploads the store logo.
+3. Logo is stored in Cloudflare R2.
+4. Logo appears on the live website.
+5. Administrator uploads a homepage banner.
+6. Banner appears correctly.
+
+### Product test
+1. Administrator adds a mobile phone.
+2. Administrator uploads multiple product images.
+3. Images are saved in Cloudflare R2.
+4. Product is saved in Supabase.
+5. Product appears on the live shop page.
+6. Product details display correctly.
+
+### Shopping test
+1. Customer opens a product.
+2. Customer adds it to the cart.
+3. Customer changes quantity.
+4. Customer proceeds to checkout.
+5. Customer enters delivery information.
+6. Customer selects a payment method.
+7. Customer places the order.
+8. Order is saved correctly.
+9. Stock is updated safely.
+10. Customer receives an order confirmation.
+
+### Payment test
+1. Customer selects bank transfer.
+2. Website displays configured bank details.
+3. Customer uploads a receipt.
+4. Receipt is saved privately in Cloudflare R2.
+5. Administrator sees the pending receipt.
+6. Administrator approves or rejects it.
+7. Payment status updates correctly.
+
+### WhatsApp test
+1. Customer opens a product.
+2. Customer clicks Order on WhatsApp.
+3. WhatsApp opens with the correct product information.
+4. Customer can open an order summary through WhatsApp.
+
+### Admin test
+1. Administrator opens an order.
+2. Administrator confirms it.
+3. Administrator changes order status.
+4. Customer can track the order.
+5. Administrator can print an invoice.
+6. Administrator can export order reports.
+
+### Security test
+1. Customer cannot access admin pages.
+2. Customer cannot view another customer's orders.
+3. Customer cannot change product prices through browser requests.
+4. Customer cannot approve their own payment.
+5. Unauthorised users cannot access private receipts.
+6. Storage secrets are not exposed in browser code.
+
+---
+
+# 29. FINAL INSTRUCTIONS TO GOOGLE AI STUDIO
+
+Build a real full-stack application.
+
+Prioritise functionality, security, maintainability and professional design.
+
+Do not simply create a landing page and stop.
+
+Do not create decorative buttons that do nothing.
+
+Do not simulate backend functionality.
+
+Do not claim that external integrations work until they are configured and tested.
+
+When credentials are missing, create the integration structure and a clear configuration screen.
+
+Use Cloudflare R2 for all uploaded files and Supabase for database and authentication.
+
+Keep the application modular and scalable.
+
+If the project is too large to generate in one pass, implement it stage by stage, preserve the existing working code and database structure, and continue until all major modules are implemented.
+
+At the end, provide:
+- Complete application source code.
+- Database schema and migrations.
+- Environment variable template.
+- Cloudflare R2 setup instructions.
+- Supabase setup instructions.
+- Payment configuration instructions.
+- Admin setup instructions.
+- Deployment instructions.
+- Testing checklist.
+
+The final result must be a professional, secure and fully functional Pakistani mobile phone e-commerce platform.

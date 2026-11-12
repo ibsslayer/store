@@ -1,0 +1,928 @@
+{
+  "profiles": [
+    {
+      "id": "admin-001",
+      "email": "ibsslayer@gmail.com",
+      "full_name": "Lead Administrator",
+      "phone": "+92 300 1234567",
+      "whatsapp": "+92 300 1234567",
+      "role": "super_admin",
+      "password_hash": "055ea9eea437f048cda74350f56785b7b0d49013a737481a46e67fa17eaf362a",
+      "must_change_password": false,
+      "created_at": "2026-11-12T11:25:52.295Z"
+    },
+    {
+      "id": "customer-001",
+      "email": "kamran.ali@gmail.com",
+      "full_name": "Kamran Ali Khan",
+      "phone": "03218765432",
+      "whatsapp": "03218765432",
+      "role": "customer",
+      "password_hash": "9172482ae093cdbeb6b2e170114def578f002c5ea533776abd643fabc4625b43",
+      "must_change_password": false,
+      "created_at": "2026-11-12T11:25:52.296Z"
+    }
+  ],
+  "products": [
+    {
+      "id": "prod-iphone-16-pro-max",
+      "name": "Apple iPhone 16 Pro Max 256GB - Desert Titanium",
+      "slug": "apple-iphone-16-pro-max-256gb-desert-titanium",
+      "brand": "Apple",
+      "category": "PTA-Approved Phones",
+      "model": "iPhone 16 Pro Max",
+      "sku": "APL-16PM-256-DT-PTA",
+      "description": "The pinnacle of smartphone innovation. Apple iPhone 16 Pro Max features grade 5 titanium design, Camera Control button, 48MP Fusion camera system with 5x telephoto, and revolutionary A18 Pro chip. PTA Officially Approved with valid customs duty stamp and 1 Year Apple International/Official Pakistan Warranty.",
+      "original_price": 579999,
+      "selling_price": 549999,
+      "discount_percentage": 5.17,
+      "stock": 14,
+      "ram": "8GB",
+      "storage": "256GB",
+      "color": "Desert Titanium",
+      "condition": "Brand new",
+      "pta_status": "PTA approved",
+      "warranty": "1 Year Official Mercantile Warranty",
+      "delivery_info": "Free VIP insured courier delivery across Pakistan (24-48 hrs in Lahore, Karachi, Islamabad)",
+      "specs": {
+        "Display": "6.9-inch Super Retina XDR OLED, ProMotion 120Hz",
+        "Processor": "A18 Pro (3nm architecture) with 6-core GPU",
+        "Main Camera": "48MP Fusion + 48MP Ultra Wide + 12MP 5x Telephoto",
+        "Battery": "Up to 33 hours video playback, 25W MagSafe",
+        "Build": "Titanium with textured matte glass back & Ceramic Shield",
+        "PTA Customs Status": "100% Tax Paid & Official PTA Approved"
+      },
+      "is_featured": true,
+      "is_best_seller": true,
+      "is_new_arrival": true,
+      "is_published": true,
+      "main_image_url": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=80",
+          "alt_text": "Front & Back View"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=800&auto=format&fit=crop&q=80",
+          "alt_text": "Camera System"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1616469829941-c7200edec809?w=800&auto=format&fit=crop&q=80",
+          "alt_text": "Titanium Frame"
+        }
+      ],
+      "views_count": 3420,
+      "created_at": "2026-11-09T11:25:52.296Z"
+    },
+    {
+      "id": "prod-samsung-s24-ultra",
+      "name": "Samsung Galaxy S24 Ultra 5G 512GB - Titanium Gray",
+      "slug": "samsung-galaxy-s24-ultra-512gb-titanium-gray",
+      "brand": "Samsung",
+      "category": "PTA-Approved Phones",
+      "model": "Galaxy S24 Ultra",
+      "sku": "SAM-S24U-512-TG-PTA",
+      "description": "Unleash Galaxy AI with the stunning Samsung Galaxy S24 Ultra. Titanium exterior, flat 6.8\" Dynamic AMOLED 2X with Corning Gorilla Armor, integrated S-Pen, and 200MP Quad Telephoto Camera with ProVisual Engine. Official PTA approved with 1 Year Samsung Pakistan Warranty.",
+      "original_price": 449999,
+      "selling_price": 414999,
+      "discount_percentage": 7.78,
+      "stock": 9,
+      "ram": "12GB",
+      "storage": "512GB",
+      "color": "Titanium Gray",
+      "condition": "Box packed",
+      "pta_status": "PTA approved",
+      "warranty": "1 Year Samsung Pakistan Official Warranty",
+      "delivery_info": "Free insured delivery via TCS / Leopards Express",
+      "specs": {
+        "Display": "6.8-inch QHD+ Dynamic AMOLED 2X, 2600 nits, anti-reflective",
+        "Processor": "Snapdragon 8 Gen 3 for Galaxy",
+        "Camera": "200MP Main + 50MP 5x Periscope + 10MP 3x + 12MP Ultra-wide",
+        "Battery": "5000 mAh, 45W Fast Charging",
+        "AI Features": "Circle to Search, Live Call Translate, Note Assist"
+      },
+      "is_featured": true,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_published": true,
+      "main_image_url": "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=800&auto=format&fit=crop&q=80",
+          "alt_text": "Samsung S24 Ultra Display"
+        },
+        {
+          "url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=800&auto=format&fit=crop&q=80",
+          "alt_text": "S-Pen and Camera"
+        }
+      ],
+      "views_count": 2890,
+      "created_at": "2026-11-07T11:25:52.296Z"
+    },
+    {
+      "id": "prod-iphone-16-pro-nonpta",
+      "name": "Apple iPhone 16 Pro 128GB - Black Titanium (Non-PTA)",
+      "slug": "apple-iphone-16-pro-128gb-black-titanium-non-pta",
+      "brand": "Apple",
+      "category": "Non-PTA Phones",
+      "model": "iPhone 16 Pro",
+      "sku": "APL-16P-128-BK-NONPTA",
+      "description": "Factory Unlocked Apple iPhone 16 Pro in Black Titanium. Physical SIM + eSIM. 2 months official SIM validity working upon first activation in Pakistan, after which PTA tax can be paid at your convenience via DIRBS / FBR portal. Brand new in sealed original box.",
+      "original_price": 350000,
+      "selling_price": 324999,
+      "discount_percentage": 7.14,
+      "stock": 22,
+      "ram": "8GB",
+      "storage": "128GB",
+      "color": "Black Titanium",
+      "condition": "Box packed",
+      "pta_status": "Non-PTA",
+      "warranty": "1 Year International Apple Warranty",
+      "delivery_info": "Same day dispatch. Cash on Delivery available.",
+      "specs": {
+        "Display": "6.3-inch Super Retina XDR OLED, 120Hz ProMotion",
+        "Processor": "A18 Pro Bionic",
+        "Camera": "48MP Fusion + 48MP Ultra-wide + 12MP 5x Telephoto",
+        "SIM Slot": "Dual eSIM or Physical + eSIM (Global LL/A or ZP/A)",
+        "PTA Status": "Non-PTA (2 Months Free SIM active on first insert)"
+      },
+      "is_featured": false,
+      "is_best_seller": true,
+      "is_new_arrival": true,
+      "is_published": true,
+      "main_image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02560?w=800&auto=format&fit=crop&q=80",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1511707171634-5f897ff02560?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "views_count": 4190,
+      "created_at": "2026-11-10T11:25:52.296Z"
+    },
+    {
+      "id": "prod-xiaomi-14t-pro",
+      "name": "Xiaomi 14T Pro 5G 12GB/512GB - Titan Gray",
+      "slug": "xiaomi-14t-pro-512gb-titan-gray",
+      "brand": "Xiaomi",
+      "category": "PTA-Approved Phones",
+      "model": "Xiaomi 14T Pro",
+      "sku": "XMI-14TP-512-GR-PTA",
+      "description": "Co-engineered with Leica. Flagship MediaTek Dimensity 9300+ processor, 144Hz AI CrystalRes AMOLED display, 120W HyperCharge (0-100% in 19 mins), and 50W wireless charging. Genuine PTA Approved phone with official warranty card inside box.",
+      "original_price": 229999,
+      "selling_price": 214999,
+      "discount_percentage": 6.52,
+      "stock": 11,
+      "ram": "12GB",
+      "storage": "512GB",
+      "color": "Titan Gray",
+      "condition": "Brand new",
+      "pta_status": "PTA approved",
+      "warranty": "1 Year Xiaomi Pakistan Official Warranty",
+      "delivery_info": "Free express shipping across Pakistan",
+      "specs": {
+        "Processor": "MediaTek Dimensity 9300+ (4nm)",
+        "Display": "6.67\" 144Hz 1.5K AMOLED, 4000 nits peak",
+        "Camera": "Leica Summilux 50MP Light Fusion 900 + 50MP Telephoto + 12MP Ultrawide",
+        "Charging": "120W Wired + 50W Wireless Fast Charging"
+      },
+      "is_featured": true,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_published": true,
+      "main_image_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "views_count": 1780,
+      "created_at": "2026-11-06T11:25:52.296Z"
+    },
+    {
+      "id": "prod-redmi-note-13-pro",
+      "name": "Redmi Note 13 Pro 8GB/256GB - Midnight Black",
+      "slug": "redmi-note-13-pro-256gb-black",
+      "brand": "Xiaomi",
+      "category": "New Mobile Phones",
+      "model": "Redmi Note 13 Pro",
+      "sku": "RDM-N13P-256-BK-PTA",
+      "description": "Pakistan’s favorite mid-ranger! 200MP ultra-clear camera with OIS, 120Hz FHD+ AMOLED with in-display fingerprint sensor, Snapdragon 7s Gen 2 processor, and 67W turbo charging with charger included in the box.",
+      "original_price": 84999,
+      "selling_price": 76999,
+      "discount_percentage": 9.41,
+      "stock": 34,
+      "ram": "8GB",
+      "storage": "256GB",
+      "color": "Midnight Black",
+      "condition": "Box packed",
+      "pta_status": "PTA approved",
+      "warranty": "1 Year Airlink / CoreCart Official Warranty",
+      "delivery_info": "Cash on delivery available nationwide",
+      "specs": {
+        "Camera": "200MP OIS Ultra-Clear Main Sensor",
+        "Display": "6.67\" 120Hz AMOLED, Gorilla Glass 5",
+        "Processor": "Snapdragon 7s Gen 2",
+        "Battery": "5000mAh with 67W Turbo Charger"
+      },
+      "is_featured": false,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_published": true,
+      "main_image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "views_count": 5120,
+      "created_at": "2026-11-02T11:25:52.296Z"
+    },
+    {
+      "id": "prod-infinix-note-40-pro",
+      "name": "Infinix Note 40 Pro 12GB/256GB - Vintage Green",
+      "slug": "infinix-note-40-pro-256gb-vintage-green",
+      "brand": "Infinix",
+      "category": "New Mobile Phones",
+      "model": "Note 40 Pro",
+      "sku": "INF-N40P-256-VG-PTA",
+      "description": "Complete charging package: 70W All-Round FastCharge 2.0 + 20W Wireless MagCharge (MagPad included free). 3D-Curved 120Hz AMOLED display, 108MP OIS camera, and JBL tuned dual stereo speakers.",
+      "original_price": 69999,
+      "selling_price": 64999,
+      "discount_percentage": 7.14,
+      "stock": 18,
+      "ram": "12GB",
+      "storage": "256GB",
+      "color": "Vintage Green",
+      "condition": "Box packed",
+      "pta_status": "PTA approved",
+      "warranty": "1 Year Carlcare Official Warranty",
+      "delivery_info": "Free delivery on prepaid bank/JazzCash orders",
+      "specs": {
+        "Display": "6.78\" 120Hz 3D-Curved AMOLED",
+        "Charging": "70W FastCharge + 20W Wireless MagPad included",
+        "Camera": "108MP OIS Super-Zoom Camera",
+        "Audio": "Dual Speakers Tuned by JBL"
+      },
+      "is_featured": false,
+      "is_best_seller": true,
+      "is_new_arrival": true,
+      "is_published": true,
+      "main_image_url": "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=800&auto=format&fit=crop&q=80",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "views_count": 2210,
+      "created_at": "2026-11-08T11:25:52.296Z"
+    },
+    {
+      "id": "prod-pixel-9-pro-xl",
+      "name": "Google Pixel 9 Pro XL 256GB - Porcelain",
+      "slug": "google-pixel-9-pro-xl-256gb-porcelain",
+      "brand": "Google Pixel",
+      "category": "PTA-Approved Phones",
+      "model": "Pixel 9 Pro XL",
+      "sku": "GGL-PX9P-256-PC-PTA",
+      "description": "Google Tensor G4 processor with 16GB RAM for the ultimate Google Gemini on-device AI experience. Pro triple camera system with Super Res Zoom up to 30x and 8K Video Boost. Approved by PTA with verified tax receipt.",
+      "original_price": 385000,
+      "selling_price": 349999,
+      "discount_percentage": 9.09,
+      "stock": 6,
+      "ram": "16GB",
+      "storage": "256GB",
+      "color": "Porcelain",
+      "condition": "Brand new",
+      "pta_status": "PTA approved",
+      "warranty": "1 Year International / 6 Months Shop Hardware Warranty",
+      "delivery_info": "Express VIP shipping",
+      "specs": {
+        "Chipset": "Google Tensor G4 with Titan M2 security coprocessor",
+        "Display": "6.8-inch Super Actua LTPO OLED (1-120Hz), 3000 nits",
+        "Camera": "50MP Octa PD main + 48MP Quad PD telephoto + 48MP ultrawide",
+        "Updates": "7 full years of Android OS and Feature Drops"
+      },
+      "is_featured": true,
+      "is_best_seller": false,
+      "is_new_arrival": true,
+      "is_published": true,
+      "main_image_url": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "views_count": 1940,
+      "created_at": "2026-11-05T11:25:52.296Z"
+    },
+    {
+      "id": "prod-oneplus-12-used",
+      "name": "OnePlus 12 5G 16GB/512GB - Silky Black (Used / 10/10 Condition)",
+      "slug": "oneplus-12-512gb-silky-black-used",
+      "brand": "OnePlus",
+      "category": "Used Mobile Phones",
+      "model": "OnePlus 12",
+      "sku": "OP-12-512-BK-USED",
+      "description": "Pristine 10/10 condition, strictly inspected by our mobile hardware technicians. Snapdragon 8 Gen 3, 2K 120Hz ProXDR display with Aqua Touch, Hasselblad Camera System, 5400mAh battery with 100W original SuperVOOC charger and box included.",
+      "original_price": 245000,
+      "selling_price": 219999,
+      "discount_percentage": 10.2,
+      "stock": 3,
+      "ram": "16GB",
+      "storage": "512GB",
+      "color": "Silky Black",
+      "condition": "Used",
+      "pta_status": "PTA approved",
+      "warranty": "1 Month Full Checking & Hardware Shop Warranty",
+      "delivery_info": "Inspection on delivery available in Lahore & Karachi",
+      "specs": {
+        "Condition Grade": "10/10 Pristine (Scratchless Screen & Body)",
+        "Battery Health": "99% original capacity",
+        "In Box": "Original 100W SuperVOOC charger, red cable, warranty card"
+      },
+      "is_featured": false,
+      "is_best_seller": false,
+      "is_new_arrival": false,
+      "is_published": true,
+      "main_image_url": "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=800&auto=format&fit=crop&q=80",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "views_count": 1451,
+      "created_at": "2026-11-04T11:25:52.296Z"
+    },
+    {
+      "id": "prod-anker-65w-charger",
+      "name": "Anker Prime 67W GaN Wall Charger (3-Port Fast Charger)",
+      "slug": "anker-prime-67w-gan-wall-charger",
+      "brand": "Apple",
+      "category": "Chargers & Adapters",
+      "model": "Anker Prime 67W",
+      "sku": "ANK-67W-GAN-3P",
+      "description": "Ultra-compact high-speed GaN charger with 2x USB-C ports and 1x USB-A port. Fast charges iPhone 16/15, Samsung S24 Ultra, MacBook and laptops simultaneously. ActiveShield 2.0 temperature monitoring.",
+      "original_price": 13500,
+      "selling_price": 11499,
+      "discount_percentage": 14.81,
+      "stock": 45,
+      "ram": "N/A",
+      "storage": "N/A",
+      "color": "Space Gray",
+      "condition": "Brand new",
+      "pta_status": "PTA status not applicable",
+      "warranty": "18 Months Official Anker Pakistan Warranty",
+      "delivery_info": "Dispatches within 24 hours",
+      "specs": {
+        "Total Output": "67W Max High-Speed Power Delivery",
+        "Ports": "2x USB-C + 1x USB-A",
+        "Technology": "GaNPrime with PowerIQ 4.0"
+      },
+      "is_featured": false,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_published": true,
+      "main_image_url": "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=800&auto=format&fit=crop&q=80",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "views_count": 890,
+      "created_at": "2026-10-31T11:25:52.296Z"
+    },
+    {
+      "id": "prod-airpods-pro-2",
+      "name": "Apple AirPods Pro (2nd Generation) with MagSafe Case (USB-C)",
+      "slug": "apple-airpods-pro-2nd-gen-usb-c",
+      "brand": "Apple",
+      "category": "Earbuds & Audio",
+      "model": "AirPods Pro 2",
+      "sku": "APL-APP2-USBC",
+      "description": "Up to 2x more Active Noise Cancellation, Transparency mode, and Adaptive Audio. Personalized Spatial Audio with dynamic head tracking. Dust, sweat, and water-resistant (IP54) with USB-C charging.",
+      "original_price": 74999,
+      "selling_price": 67999,
+      "discount_percentage": 9.33,
+      "stock": 20,
+      "ram": "N/A",
+      "storage": "N/A",
+      "color": "White",
+      "condition": "Brand new",
+      "pta_status": "PTA status not applicable",
+      "warranty": "1 Year Official Apple Warranty",
+      "delivery_info": "Free insured courier delivery",
+      "specs": {
+        "Chip": "Apple H2 headphone chip & Apple U1 in charging case",
+        "Battery": "Up to 6 hours listening (30 hours with case)",
+        "Connector": "USB-C + MagSafe Wireless"
+      },
+      "is_featured": true,
+      "is_best_seller": true,
+      "is_new_arrival": false,
+      "is_published": true,
+      "main_image_url": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80",
+      "gallery": [
+        {
+          "url": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=800&auto=format&fit=crop&q=80"
+        }
+      ],
+      "views_count": 2130,
+      "created_at": "2026-11-03T11:25:52.296Z"
+    }
+  ],
+  "brands": [
+    {
+      "id": "b-apple",
+      "name": "Apple",
+      "slug": "apple",
+      "logo_url": "https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?w=120&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "b-samsung",
+      "name": "Samsung",
+      "slug": "samsung",
+      "logo_url": "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=120&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "b-xiaomi",
+      "name": "Xiaomi",
+      "slug": "xiaomi",
+      "logo_url": "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=120&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "b-google",
+      "name": "Google Pixel",
+      "slug": "google-pixel",
+      "logo_url": "https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=120&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "b-vivo",
+      "name": "Vivo",
+      "slug": "vivo",
+      "logo_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02560?w=120&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "b-oppo",
+      "name": "Oppo",
+      "slug": "oppo",
+      "logo_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=120&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "b-infinix",
+      "name": "Infinix",
+      "slug": "infinix",
+      "logo_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=120&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "b-tecno",
+      "name": "Tecno",
+      "slug": "tecno",
+      "logo_url": "https://images.unsplash.com/photo-1533228896884-6a8f9312804b?w=120&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "b-oneplus",
+      "name": "OnePlus",
+      "slug": "oneplus",
+      "logo_url": "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=120&auto=format&fit=crop&q=80",
+      "is_active": true
+    }
+  ],
+  "categories": [
+    {
+      "id": "c-new",
+      "name": "New Mobile Phones",
+      "slug": "new-mobile-phones",
+      "image_url": "https://images.unsplash.com/photo-1511707171634-5f897ff02560?w=300&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "c-used",
+      "name": "Used Mobile Phones",
+      "slug": "used-mobile-phones",
+      "image_url": "https://images.unsplash.com/photo-1580910051074-3eb694886505?w=300&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "c-box",
+      "name": "Box-Packed Phones",
+      "slug": "box-packed-phones",
+      "image_url": "https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?w=300&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "c-pta",
+      "name": "PTA-Approved Phones",
+      "slug": "pta-approved-phones",
+      "image_url": "https://images.unsplash.com/photo-1592899677977-9c10ca588bbd?w=300&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "c-nonpta",
+      "name": "Non-PTA Phones",
+      "slug": "non-pta-phones",
+      "image_url": "https://images.unsplash.com/photo-1616469829941-c7200edec809?w=300&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "c-chargers",
+      "name": "Chargers & Adapters",
+      "slug": "chargers",
+      "image_url": "https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=300&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "c-earbuds",
+      "name": "Earbuds & Audio",
+      "slug": "earbuds",
+      "image_url": "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=300&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "c-smartwatches",
+      "name": "Smartwatches",
+      "slug": "smartwatches",
+      "image_url": "https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=300&auto=format&fit=crop&q=80",
+      "is_active": true
+    },
+    {
+      "id": "c-covers",
+      "name": "Phone Covers & Protectors",
+      "slug": "phone-covers",
+      "image_url": "https://images.unsplash.com/photo-1603539947678-cd3954ed515d?w=300&auto=format&fit=crop&q=80",
+      "is_active": true
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord-1794482789224",
+      "order_number": "PKM-2026-22086",
+      "customer_name": "Tariq Aziz",
+      "customer_phone": "03009988776",
+      "customer_whatsapp": "03009988776",
+      "shipping_address": "Flat 3, Al-Latif Centre, Gulberg III",
+      "city": "Lahore",
+      "province": "Punjab",
+      "subtotal": 76999,
+      "delivery_charges": 0,
+      "discount_amount": 0,
+      "total_amount": 76999,
+      "payment_method": "jazzcash",
+      "payment_status": "awaiting_verification",
+      "order_status": "new_order",
+      "tracking_history": [
+        {
+          "status": "new_order",
+          "title": "Order Placed",
+          "description": "Order successfully recorded with payment method: JAZZCASH",
+          "timestamp": "2026-11-12T11:26:29.224Z"
+        }
+      ],
+      "created_at": "2026-11-12T11:26:29.224Z",
+      "updated_at": "2026-11-12T11:26:29.224Z",
+      "items": [
+        {
+          "id": "oi-1794482789223-8zqzn9",
+          "product_id": "prod-redmi-note-13-pro",
+          "product_name": "Redmi Note 13 Pro 8GB/256GB - Midnight Black",
+          "product_model": "Redmi Note 13 Pro",
+          "product_sku": "RDM-N13P-256-BK-PTA",
+          "pta_status": "PTA approved",
+          "ram": "8GB",
+          "storage": "256GB",
+          "color": "Midnight Black",
+          "unit_price": 76999,
+          "quantity": 1,
+          "total_price": 76999,
+          "image_url": "https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80"
+        }
+      ]
+    },
+    {
+      "id": "ord-101",
+      "order_number": "PKM-2026-8841",
+      "customer_id": "customer-001",
+      "customer_name": "Kamran Ali Khan",
+      "customer_phone": "03218765432",
+      "customer_whatsapp": "03218765432",
+      "customer_email": "kamran.ali@gmail.com",
+      "shipping_address": "House 14-B, Street 7, Sector F-8/2",
+      "city": "Islamabad",
+      "province": "Islamabad Capital Territory",
+      "postal_code": "44000",
+      "delivery_instructions": "Call before delivery, please deliver after 2 PM.",
+      "subtotal": 549999,
+      "delivery_charges": 0,
+      "discount_amount": 5000,
+      "coupon_code": "WELCOME5000",
+      "total_amount": 544999,
+      "payment_method": "bank_transfer",
+      "payment_status": "paid",
+      "order_status": "dispatched",
+      "courier_company": "TCS Express",
+      "courier_tracking_number": "TCS-PK-991827364",
+      "tracking_history": [
+        {
+          "status": "new_order",
+          "title": "Order Placed",
+          "description": "Order submitted by customer via Bank Transfer.",
+          "timestamp": "2026-11-10T11:25:52.296Z"
+        },
+        {
+          "status": "confirmed",
+          "title": "Payment Verified",
+          "description": "Meezan Bank transfer receipt approved by Accounts department.",
+          "timestamp": "2026-11-10T23:25:52.296Z"
+        },
+        {
+          "status": "processing",
+          "title": "Packed & Inspected",
+          "description": "Item serialized and packed with tamper-proof security tape.",
+          "timestamp": "2026-11-11T11:25:52.296Z"
+        },
+        {
+          "status": "dispatched",
+          "title": "Handed to Courier",
+          "description": "Consignment handed over to TCS Express. Tracking # TCS-PK-991827364",
+          "timestamp": "2026-11-11T23:25:52.296Z"
+        }
+      ],
+      "admin_notes": "Priority customer. VIP insured dispatch.",
+      "created_at": "2026-11-10T11:25:52.296Z",
+      "updated_at": "2026-11-11T23:25:52.296Z",
+      "items": [
+        {
+          "id": "oi-1",
+          "product_id": "prod-iphone-16-pro-max",
+          "product_name": "Apple iPhone 16 Pro Max 256GB - Desert Titanium",
+          "product_model": "iPhone 16 Pro Max",
+          "product_sku": "APL-16PM-256-DT-PTA",
+          "pta_status": "PTA approved",
+          "ram": "8GB",
+          "storage": "256GB",
+          "color": "Desert Titanium",
+          "unit_price": 549999,
+          "quantity": 1,
+          "total_price": 549999,
+          "image_url": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=300&auto=format&fit=crop&q=80"
+        }
+      ]
+    }
+  ],
+  "bank_accounts": [
+    {
+      "id": "bank-meezan",
+      "bank_name": "Meezan Bank Limited",
+      "account_title": "iBs Slayer E-Commerce SMC-Pvt Ltd",
+      "account_number": "01000102030405",
+      "iban": "PK64MEZN0001000102030405",
+      "branch_name": "Main Gulberg Branch (Code: 0101), Lahore",
+      "instructions": "Please transfer the exact payable amount and upload your transaction receipt / screenshot with Transaction ID. Orders are verified within 15-30 minutes during business hours.",
+      "logo_url": "https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=120&auto=format&fit=crop&q=80",
+      "is_enabled": true
+    },
+    {
+      "id": "bank-hbl",
+      "bank_name": "Habib Bank Limited (HBL)",
+      "account_title": "iBs Slayer Technologies",
+      "account_number": "00123456789012",
+      "iban": "PK36HABB0000123456789012",
+      "branch_name": "Blue Area Branch, Islamabad",
+      "instructions": "Use your Order Number as the transfer memo / reference note. Instant 1-link / Raast transfers accepted.",
+      "logo_url": "https://images.unsplash.com/photo-1541354329998-f4d9a9f9297f?w=120&auto=format&fit=crop&q=80",
+      "is_enabled": true
+    },
+    {
+      "id": "bank-alfalah",
+      "bank_name": "Bank Alfalah",
+      "account_title": "iBs Slayer Online Sales",
+      "account_number": "00987654321098",
+      "iban": "PK12ALFH0098765432109876",
+      "branch_name": "Clifton Branch, Karachi",
+      "instructions": "Direct transfer or Raast ID: 03001234567. Upload transfer confirmation image after checkout.",
+      "logo_url": "https://images.unsplash.com/photo-1501167786227-4cba60f6d58f?w=120&auto=format&fit=crop&q=80",
+      "is_enabled": true
+    }
+  ],
+  "payment_receipts": [],
+  "coupons": [
+    {
+      "id": "cp-welcome",
+      "code": "WELCOME5000",
+      "description": "Get Flat Rs. 5,000 off on any mobile phone order over Rs. 50,000",
+      "discount_type": "fixed_amount",
+      "discount_value": 5000,
+      "min_order_amount": 50000,
+      "max_discount_amount": 5000,
+      "usage_limit": 500,
+      "times_used": 48,
+      "is_active": true,
+      "end_date": "2026-12-31T23:59:59Z"
+    },
+    {
+      "id": "cp-azadi",
+      "code": "AZADI2026",
+      "description": "Special 10% discount on tech accessories and gadgets",
+      "discount_type": "percentage",
+      "discount_value": 10,
+      "min_order_amount": 5000,
+      "max_discount_amount": 15000,
+      "usage_limit": 1000,
+      "times_used": 112,
+      "is_active": true,
+      "end_date": "2026-12-31T23:59:59Z"
+    },
+    {
+      "id": "cp-freeship",
+      "code": "FREESHIP",
+      "description": "Free VIP insured courier delivery across all Pakistani cities",
+      "discount_type": "fixed_amount",
+      "discount_value": 450,
+      "min_order_amount": 10000,
+      "usage_limit": 2000,
+      "times_used": 320,
+      "is_active": true,
+      "end_date": "2026-12-31T23:59:59Z"
+    }
+  ],
+  "giveaways": [
+    {
+      "id": "gw-iphone-16",
+      "title": "Grand Pakistan Giveaway: Apple iPhone 16 Pro Max 256GB (Desert Titanium, Official PTA Approved)",
+      "slug": "pakistan-iphone-16-pro-max-giveaway",
+      "description": "Win an official PTA-approved iPhone 16 Pro Max worth Rs. 549,999! No purchase required. Simply enter your verified Pakistani contact information and tell us which feature you look forward to most. Free insured delivery to the winner anywhere in Pakistan.",
+      "prize_details": "1x Brand New Apple iPhone 16 Pro Max (256GB, Desert Titanium) + 1x Anker 65W GaN Fast Charger + Official PTA Customs Certificate",
+      "image_url": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=900&auto=format&fit=crop&q=80",
+      "start_date": "2026-10-29T11:25:52.296Z",
+      "end_date": "2026-12-02T11:25:52.296Z",
+      "is_closed": false,
+      "total_entries": 4380,
+      "entries": [
+        {
+          "id": "gwe-1",
+          "full_name": "Muhammad Usman Tariq",
+          "phone": "0302-8877665",
+          "email": "usman.tariq@gmail.com",
+          "city": "Lahore",
+          "why_win_reason": "I am a computer science student creating open-source apps for Pakistan. This device will help build and test high-performance mobile software.",
+          "created_at": "2026-11-07T11:25:52.296Z"
+        },
+        {
+          "id": "gwe-2",
+          "full_name": "Fatima Zahra",
+          "phone": "0333-1122334",
+          "email": "fatima.zahra@outlook.com",
+          "city": "Karachi",
+          "why_win_reason": "Mobile photographer and visual artist documenting old Karachi heritage. The 5x optical telephoto lens would revolutionize my documentation.",
+          "created_at": "2026-11-09T11:25:52.296Z"
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "id": "rev-1",
+      "product_id": "prod-iphone-16-pro-max",
+      "customer_name": "Zeeshan Malik (Lahore)",
+      "rating": 5,
+      "title": "100% Genuine PTA Approved & Super Fast Delivery",
+      "comment": "Received the iPhone 16 Pro Max in Lahore within 24 hours of ordering. Checked on PTA DIRBS portal with IMEI, status is official approved. Sealed box with warranty slip. Best mobile shop in Pakistan!",
+      "created_at": "2026-11-08T11:25:52.296Z"
+    },
+    {
+      "id": "rev-2",
+      "product_id": "prod-samsung-s24-ultra",
+      "customer_name": "Dr. Tariq Mahmood (Karachi)",
+      "rating": 5,
+      "title": "Authentic Galaxy AI Beast",
+      "comment": "Very pleased with the service. Paid via Bank Alfalah, receipt verified in 15 minutes, received Leopards courier tracking immediately. The phone is outstanding.",
+      "created_at": "2026-11-06T11:25:52.296Z"
+    }
+  ],
+  "media_assets": [],
+  "settings": {
+    "store_name": "iBs Slayer",
+    "store_logo_url": "",
+    "tagline": "Pakistan's #1 Destination for PTA-Approved Smartphones & Gadgets",
+    "contact_number": "+92 (042) 3578-9000",
+    "whatsapp_number": "+923001234567",
+    "support_email": "support@ibsslayer.pk",
+    "business_address": "Suite 42-45, 3rd Floor, Hafeez Centre, Main Boulevard Gulberg III, Lahore, Pakistan",
+    "announcement_bar": "⚡ Flash Sale Live: Up to Rs. 25,000 Off on Flagship Phones + Free Delivery Nationwide on orders above Rs. 50,000! Official PTA Approved Guarantee.",
+    "free_shipping_threshold": 50000,
+    "standard_shipping_rate": 450,
+    "jazzcash_details": {
+      "enabled": true,
+      "title": "iBs Slayer Technologies",
+      "account_number": "03001234567",
+      "mobile_number": "03001234567",
+      "instructions": "Open your JazzCash App > Send Money > Enter Till/Mobile 0300-1234567 > Enter exact order amount > Capture transaction screenshot with TID and upload on order page."
+    },
+    "easypaisa_details": {
+      "enabled": true,
+      "title": "iBs Slayer Official Store",
+      "account_number": "03459876543",
+      "mobile_number": "03459876543",
+      "instructions": "Open Easypaisa App > Send Money > Enter 0345-9876543 > Write Order Number in message > Submit payment and upload receipt screenshot."
+    },
+    "hero_banners": [
+      {
+        "id": "hb-1",
+        "title": "iPhone 16 Pro Max",
+        "subtitle": "Titanium. Official PTA Approved. Pure Flagship Power.",
+        "badge": "NEW ARRIVAL • IN STOCK",
+        "cta_text": "Shop iPhone 16 Pro Max",
+        "cta_link": "/product/apple-iphone-16-pro-max-256gb-desert-titanium",
+        "image_url": "https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=1000&auto=format&fit=crop&q=80",
+        "bg_gradient": "from-zinc-950 via-zinc-900 to-black"
+      },
+      {
+        "id": "hb-2",
+        "title": "Samsung Galaxy S24 Ultra",
+        "subtitle": "Welcome to Galaxy AI. 200MP Camera with ProVisual Engine.",
+        "badge": "SPECIAL OFFER • SAVE RS. 35,000",
+        "cta_text": "Explore Galaxy S24 Ultra",
+        "cta_link": "/product/samsung-galaxy-s24-ultra-512gb-titanium-gray",
+        "image_url": "https://images.unsplash.com/photo-1610945265064-0e34e5519bbf?w=1000&auto=format&fit=crop&q=80",
+        "bg_gradient": "from-slate-950 via-indigo-950 to-zinc-950"
+      }
+    ],
+    "policies": {
+      "about_us": "iBs Slayer is Pakistan's premier electronics and smartphone retailer founded with a single mission: to deliver authentic, brand-new, and verified mobile phones with 100% transparency on PTA status and customs taxes.\n\nWith physical presence in Hafeez Centre, Lahore, and Karachi, along with a nationwide insured logistics network, we ensure customers from Gwadar to Gilgit get official warranty devices at competitive market rates.",
+      "shipping_policy": "We deliver to over 400 cities and towns across Pakistan via TCS, Leopards, M&P, and Trax.\n- Orders placed before 4:00 PM are dispatched on the same business day.\n- Delivery Time: Major cities (Lahore, Karachi, Islamabad, Rawalpindi, Faisalabad) receive parcels within 24-48 hours. Other cities within 2 to 4 business days.\n- Free Shipping on orders over Rs. 50,000.\n- All high-value mobile phone parcels are 100% insured against loss or transit damage.",
+      "return_policy": "We offer a 7-day hassle-free replacement warranty for defective or damaged goods on arrival:\n- For Brand New phones: In case of hardware defects out of the box, our verification team provides swift replacement or official warranty claim routing.\n- For Used phones: 30 days checking and hardware testing warranty.\n- Box packed phones must have untampered security seals unless an approved technical defect is documented.",
+      "privacy_policy": "Your privacy is sacred. Customer contact numbers and delivery addresses are encrypted and strictly shared only with the designated Pakistani courier partner for dispatch. We never sell customer records.",
+      "terms_conditions": "By placing an order on iBs Slayer, customers acknowledge:\n1. PTA status is clearly stated on each product page (PTA Approved vs Non-PTA).\n2. For bank transfers, JazzCash, and Easypaisa, orders are fulfilled once the transaction receipt is verified.\n3. Cash on Delivery is subject to phone verification by our sales desk for orders above Rs. 100,000.",
+      "faqs": [
+        {
+          "question": "Are your phones official PTA Approved?",
+          "answer": "Yes, every product marked \"PTA approved\" is 100% duty paid and officially stamped. You can check the IMEI on the PTA DIRBS portal (*#06# on the phone, SMS IMEI to 8484)."
+        },
+        {
+          "question": "What is the difference between PTA and Non-PTA phones?",
+          "answer": "Non-PTA phones work on Wi-Fi and have 60 days of temporary cellular SIM functionality upon first use in Pakistan. After 60 days, PTA tax must be paid to continue using local SIM cards. PTA approved devices work permanently on all Pakistani networks with zero tax liability."
+        },
+        {
+          "question": "How can I pay using JazzCash or Easypaisa?",
+          "answer": "Select JazzCash or Easypaisa at checkout. Transfer the total to our official till/account number, take a screenshot of the receipt showing the Transaction ID, and upload it directly on the order confirmation screen."
+        },
+        {
+          "question": "Can I order directly on WhatsApp?",
+          "answer": "Absolutely! Click the \"Order on WhatsApp\" button on any product page or in your shopping cart. Our representative will immediately confirm your order and dispatch details."
+        }
+      ]
+    }
+  },
+  "activity_logs": [
+    {
+      "id": "log-1794483973797",
+      "admin_email": "ibsslayer@gmail.com",
+      "action": "Admin Logged In",
+      "details": {
+        "ip": "127.0.0.1"
+      },
+      "timestamp": "2026-11-12T11:46:13.797Z"
+    },
+    {
+      "id": "log-1794483451248",
+      "admin_email": "ibsslayer@gmail.com",
+      "action": "Admin Logged In",
+      "details": {
+        "ip": "127.0.0.1"
+      },
+      "timestamp": "2026-11-12T11:37:31.248Z"
+    },
+    {
+      "id": "log-1794482784785",
+      "admin_email": "ibsslayer@gmail.com",
+      "action": "Admin Logged In",
+      "details": {
+        "ip": "127.0.0.1"
+      },
+      "timestamp": "2026-11-12T11:26:24.785Z"
+    },
+    {
+      "id": "log-1794482780260",
+      "admin_email": "ibsslayer@gmail.com",
+      "action": "Password Changed Successfully",
+      "details": {},
+      "timestamp": "2026-11-12T11:26:20.260Z"
+    },
+    {
+      "id": "log-1",
+      "admin_email": "ibsslayer@gmail.com",
+      "action": "System Initialized",
+      "details": {
+        "message": "Database initialized with authentic Pakistani smartphone catalogue and PTA rules."
+      },
+      "timestamp": "2026-11-12T11:25:52.296Z"
+    }
+  ]
+}

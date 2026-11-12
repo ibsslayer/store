@@ -1,0 +1,6 @@
+{
+  "name": "PakMobile - Pakistan's Premier Mobile Phone Store",
+  "description": "Production-ready Pakistani mobile phone e-commerce platform with PTA status, PKR pricing, Cloudflare R2 storage, JazzCash, Easypaisa, Bank Transfer, WhatsApp ordering, and complete admin dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
