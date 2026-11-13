@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Sparkles, Send, ShieldCheck, Phone, CheckCircle2 } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
+import { apiFetch } from '../lib/staticFallback';
 
 interface AiPhoneAdvisorModalProps {
   isOpen: boolean;
@@ -38,7 +39,7 @@ export const AiPhoneAdvisorModal: React.FC<AiPhoneAdvisorModalProps> = ({
     setAiResponse(null);
 
     try {
-      const res = await fetch('/api/ai-advisor', {
+      const res = await apiFetch('/api/ai-advisor', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

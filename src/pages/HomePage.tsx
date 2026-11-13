@@ -18,6 +18,7 @@ import { Product, Brand, Category, Giveaway } from '../types';
 import { ProductCard } from '../components/ProductCard';
 import { HeroSlider } from '../components/HeroSlider';
 import { useSettings } from '../context/SettingsContext';
+import { apiFetch } from '../lib/staticFallback';
 
 interface HomePageProps {
   onNavigate: (page: string, param?: string) => void;
@@ -49,10 +50,10 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate, onOpenAiAdvisor 
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/products').then(r => r.json()),
-      fetch('/api/brands').then(r => r.json()),
-      fetch('/api/categories').then(r => r.json()),
-      fetch('/api/giveaways').then(r => r.json())
+      apiFetch('/api/products').then(r => r.json()),
+      apiFetch('/api/brands').then(r => r.json()),
+      apiFetch('/api/categories').then(r => r.json()),
+      apiFetch('/api/giveaways').then(r => r.json())
     ])
       .then(([pData, bData, cData, gData]) => {
         setProducts(pData || []);

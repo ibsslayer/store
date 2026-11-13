@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Zap, Flame, Clock, Tag, ShieldCheck, ArrowRight } from 'lucide-react';
 import { Product, Coupon } from '../types';
 import { ProductCard } from '../components/ProductCard';
+import { apiFetch } from '../lib/staticFallback';
 
 interface DealsPageProps {
   onNavigate: (page: string, param?: string) => void;
@@ -14,8 +15,8 @@ export const DealsPage: React.FC<DealsPageProps> = ({ onNavigate }) => {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/products').then(r => r.json()),
-      fetch('/api/coupons').then(r => r.json())
+      apiFetch('/api/products').then(r => r.json()),
+      apiFetch('/api/coupons').then(r => r.json())
     ])
       .then(([pData, cData]) => {
         setProducts(pData || []);

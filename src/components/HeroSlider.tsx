@@ -93,8 +93,9 @@ export const HeroSlider: React.FC<HeroSliderProps> = ({ onNavigate, onOpenAiAdvi
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <button
               onClick={() => {
-                if (slide.cta_link?.startsWith('product/')) {
-                  onNavigate('product', slide.cta_link.replace('product/', ''));
+                const normalized = slide.cta_link?.replace(/^\//, '') || '';
+                if (normalized.startsWith('product/')) {
+                  onNavigate('product', normalized.replace('product/', ''));
                 } else {
                   onNavigate('shop');
                 }

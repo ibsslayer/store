@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { WebsiteSettings, R2StorageStatus } from '../types';
+import { apiFetch } from '../lib/staticFallback';
 
 interface SettingsContextType {
   settings: WebsiteSettings;
@@ -54,7 +55,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const refreshSettings = async () => {
     try {
-      const res = await fetch('/api/settings');
+      const res = await apiFetch('/api/settings');
       if (res.ok) {
         const data = await res.json();
         setSettings(data);
@@ -66,7 +67,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   const refreshStorageStatus = async () => {
     try {
-      const res = await fetch('/api/storage/status');
+      const res = await apiFetch('/api/storage/status');
       if (res.ok) {
         const data = await res.json();
         setStorageStatus(data);

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserProfile } from '../types';
+import { apiFetch } from '../lib/staticFallback';
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -26,7 +27,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     if (token) {
-      fetch('/api/auth/me', {
+      apiFetch('/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => res.ok ? res.json() : null)
@@ -45,7 +46,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, pass: string) => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await apiFetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password: pass })
@@ -68,7 +69,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const adminLogin = async (email: string, pass: string) => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/auth/admin-login', {
+      const res = await apiFetch('/api/auth/admin-login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password: pass })
@@ -96,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const register = async (fullName: string, email: string, phone: string, whatsapp: string, pass: string) => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await apiFetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -124,7 +125,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const changePassword = async (newPass: string) => {
     try {
-      const res = await fetch('/api/auth/change-password', {
+      const res = await apiFetch('/api/auth/change-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

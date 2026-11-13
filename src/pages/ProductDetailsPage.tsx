@@ -21,6 +21,7 @@ import { useCart } from '../context/CartContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useSettings } from '../context/SettingsContext';
 import { ProductCard } from '../components/ProductCard';
+import { apiFetch } from '../lib/staticFallback';
 
 interface ProductDetailsPageProps {
   slug: string;
@@ -49,7 +50,7 @@ export const ProductDetailsPage: React.FC<ProductDetailsPageProps> = ({ slug, on
 
   useEffect(() => {
     setIsLoading(true);
-    fetch(`/api/products/${slug}`)
+    apiFetch(`/api/products/${slug}`)
       .then(res => {
         if (!res.ok) throw new Error('Product not found');
         return res.json();

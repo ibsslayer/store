@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { apiFetch } from '../lib/staticFallback';
 import {
   Search,
   ShoppingCart,
@@ -52,7 +53,7 @@ export const Header: React.FC<HeaderProps> = ({ onNavigate, currentPage, onOpenA
 
     const timer = setTimeout(() => {
       setIsSearching(true);
-      fetch(`/api/products?search=${encodeURIComponent(searchQuery)}&limit=5`)
+      apiFetch(`/api/products?search=${encodeURIComponent(searchQuery)}&limit=5`)
         .then(res => res.json())
         .then(data => {
           setSearchResults(data);

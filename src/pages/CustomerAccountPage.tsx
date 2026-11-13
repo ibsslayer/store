@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { Order } from '../types';
+import { apiFetch } from '../lib/staticFallback';
 
 interface CustomerAccountPageProps {
   onNavigate: (page: string, param?: string) => void;
@@ -25,7 +26,7 @@ export const CustomerAccountPage: React.FC<CustomerAccountPageProps> = ({ onNavi
 
   useEffect(() => {
     if (token) {
-      fetch('/api/orders', {
+      apiFetch('/api/orders', {
         headers: { Authorization: `Bearer ${token}` }
       })
         .then(res => res.json())

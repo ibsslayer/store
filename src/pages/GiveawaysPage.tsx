@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Giveaway } from '../types';
+import { apiFetch } from '../lib/staticFallback';
 
 export const GiveawaysPage: React.FC = () => {
   const [giveaways, setGiveaways] = useState<Giveaway[]>([]);
@@ -26,7 +27,7 @@ export const GiveawaysPage: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/api/giveaways')
+    apiFetch('/api/giveaways')
       .then(res => res.json())
       .then(data => {
         setGiveaways(data || []);
@@ -43,7 +44,7 @@ export const GiveawaysPage: React.FC = () => {
     setErrorMessage(null);
 
     try {
-      const res = await fetch(`/api/giveaways/${selectedGiveaway.id}/enter`, {
+      const res = await apiFetch(`/api/giveaways/${selectedGiveaway.id}/enter`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

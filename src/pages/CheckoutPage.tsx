@@ -16,6 +16,7 @@ import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import { useSettings } from '../context/SettingsContext';
 import { BankAccount } from '../types';
+import { apiFetch } from '../lib/staticFallback';
 
 interface CheckoutPageProps {
   onNavigate: (page: string, param?: string) => void;
@@ -78,7 +79,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
   ];
 
   useEffect(() => {
-    fetch('/api/bank-accounts')
+    apiFetch('/api/bank-accounts')
       .then(res => res.json())
       .then(data => {
         const active = (data || []).filter((b: BankAccount) => b.is_enabled);
@@ -135,7 +136,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
         coupon_code: appliedCoupon?.code
       };
 
-      const res = await fetch('/api/orders', {
+      const res = await apiFetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

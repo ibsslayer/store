@@ -10,6 +10,7 @@ import {
   AlertCircle,
   ExternalLink
 } from 'lucide-react';
+import { apiFetch } from '../lib/staticFallback';
 
 interface TrackingResult {
   order_number: string;
@@ -49,7 +50,7 @@ export const TrackOrderPage: React.FC = () => {
     setResult(null);
 
     try {
-      const res = await fetch(
+      const res = await apiFetch(
         `/api/tracking?order_number=${encodeURIComponent(orderNumber.trim())}&phone=${encodeURIComponent(phone.trim())}`
       );
       const data = await res.json();

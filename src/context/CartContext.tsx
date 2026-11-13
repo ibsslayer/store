@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product, CartItem } from '../types';
+import { apiFetch } from '../lib/staticFallback';
 
 interface AppliedCoupon {
   code: string;
@@ -130,7 +131,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const applyCoupon = async (code: string) => {
     if (!code.trim()) return { success: false, message: 'Please enter a coupon code' };
     try {
-      const res = await fetch('/api/coupons/validate', {
+      const res = await apiFetch('/api/coupons/validate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code: code.trim(), cart_amount: subtotal })

@@ -12,6 +12,7 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { Order } from '../types';
+import { apiFetch } from '../lib/staticFallback';
 
 interface OrderConfirmationPageProps {
   orderId?: string;
@@ -45,7 +46,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
     } catch {}
 
     if (!order && orderId) {
-      fetch(`/api/orders/${orderId}`)
+      apiFetch(`/api/orders/${orderId}`)
         .then(res => res.json())
         .then(data => setOrder(data))
         .catch(() => {});
@@ -68,7 +69,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
     formData.append('notes', receiptNotes);
 
     try {
-      const res = await fetch('/api/receipts/upload', {
+      const res = await apiFetch('/api/receipts/upload', {
         method: 'POST',
         body: formData
       });

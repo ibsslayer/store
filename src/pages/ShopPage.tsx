@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { Product, Brand, Category } from '../types';
 import { ProductCard } from '../components/ProductCard';
+import { apiFetch } from '../lib/staticFallback';
 
 interface ShopPageProps {
   onNavigate: (page: string, param?: string) => void;
@@ -53,14 +54,14 @@ export const ShopPage: React.FC<ShopPageProps> = ({ onNavigate, initialQuery }) 
 
   useEffect(() => {
     fetchProducts();
-    fetch('/api/brands').then(r => r.json()).then(b => setBrands(b || []));
-    fetch('/api/categories').then(r => r.json()).then(c => setCategories(c || []));
+    apiFetch('/api/brands').then(r => r.json()).then(b => setBrands(b || []));
+    apiFetch('/api/categories').then(r => r.json()).then(c => setCategories(c || []));
   }, []);
 
   const fetchProducts = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch('/api/products');
+      const res = await apiFetch('/api/products');
       const data = await res.json();
       setProducts(data || []);
     } catch (err) {
