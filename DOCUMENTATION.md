@@ -26,28 +26,28 @@ As specified in Section 18:
 
 ---
 
-### 3. CLOUDFLARE R2 SETUP INSTRUCTIONS
-Cloudflare R2 is the primary object storage service. All credentials remain secure on the server and are never exposed to browser requests.
+### 3. BACKBLAZE B2 S3-COMPATIBLE STORAGE SETUP INSTRUCTIONS
+Backblaze B2 is the primary S3-compatible object storage service. All credentials remain secure on the server and are never exposed to browser requests.
 
-1. Log into your **Cloudflare Dashboard** > **R2 Object Storage**.
-2. Create a bucket (e.g. `pakmobile-media`).
-3. Click **Manage R2 API Tokens** and create an API token with **Object Read & Write** permissions.
-4. Set the following environment variables in your server configuration or `.env`:
+1. Log into your **Backblaze B2 Dashboard** > **Buckets** and create a bucket (e.g. `ibsslayer-media`). Note your bucket's **Region** and **S3 Endpoint** (e.g. `s3.us-west-004.backblazeb2.com`).
+2. Go to **Application Keys** > **Add a New Application Key** with Read/Write permissions for your bucket. Copy the `keyID` (`B2_ACCESS_KEY_ID`) and `applicationKey` (`B2_SECRET_ACCESS_KEY`).
+3. Set the following environment variables in your server configuration or `.env`:
    ```bash
-   R2_ACCOUNT_ID="your_cloudflare_account_id"
-   R2_ACCESS_KEY_ID="your_r2_access_key_id"
-   R2_SECRET_ACCESS_KEY="your_r2_secret_access_key"
-   R2_BUCKET_NAME="pakmobile-media"
-   R2_PUBLIC_BASE_URL="https://pub-xxxxxx.r2.dev"
+   B2_REGION="us-west-004"
+   B2_ENDPOINT="https://s3.us-west-004.backblazeb2.com"
+   B2_ACCESS_KEY_ID="your_b2_key_id"
+   B2_SECRET_ACCESS_KEY="your_b2_application_key"
+   B2_BUCKET_NAME="ibsslayer-media"
+   B2_PUBLIC_BASE_URL="https://f004.backblazeb2.com/file/ibsslayer-media"
    ```
-5. **Storage Folders**: The application organizes uploads into:
+4. **Storage Folders**: The application organizes uploads into:
    - `products/` & `product-gallery/`: Smartphone product photography
    - `logos/`: Store logo and brand emblems
    - `banners/`: Hero banners and flash promotion graphics
-   - `payment-receipts/`: **Private folder** protected by server-side presigned URLs for payment verification
+   - `payment-receipts/`: **Private folder** protected by server-side AWS SigV4 presigned URLs for payment verification
    - `giveaways/`: Giveaway prize banners and marketing graphics
 
-*Note: If Cloudflare R2 credentials are not set during initial preview, the server displays an active configuration banner in the Admin Media Manager and uses local media caching so testing is uninterrupted.*
+*Note: If Backblaze B2 credentials are not set during initial preview, the server displays an active configuration banner in the Admin Media Manager and uses local media caching so testing is uninterrupted.*
 
 ---
 

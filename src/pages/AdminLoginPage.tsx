@@ -77,7 +77,7 @@ export const AdminLoginPage: React.FC<AdminLoginPageProps> = ({ onNavigate }) =>
             Store Administrator Portal
           </h2>
           <p className="text-xs text-zinc-400">
-            Authorized administrative access for store operations, inventory, and Cloudflare R2 storage.
+            Authorized administrative access for store operations, inventory, and Backblaze B2 storage.
           </p>
         </div>
 

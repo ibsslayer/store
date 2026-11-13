@@ -159,7 +159,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
                 <span>Upload Payment Receipt / Screenshot</span>
               </h3>
               <p className="text-xs text-zinc-400 mt-0.5">
-                Saved securely in Cloudflare R2 storage for verification by our accounts team.
+                Saved securely in Backblaze B2 storage for verification by our accounts team.
               </p>
             </div>
             <span className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[11px] font-bold uppercase tracking-wider">
@@ -251,7 +251,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
                 className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-zinc-950 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition"
               >
                 {isUploading ? (
-                  <span>Uploading to Cloudflare R2...</span>
+                  <span>Uploading to Backblaze B2...</span>
                 ) : (
                   <span>Submit Payment Receipt for Approval</span>
                 )}

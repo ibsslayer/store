@@ -4,7 +4,7 @@ import multer from 'multer';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import { db, hashPassword, verifyPassword, Product, Order, OrderItem } from './server/db';
-import { r2Service } from './server/r2';
+import { b2Service } from './server/r2';
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 // Serve local uploads folder
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
-// Configure Multer memory storage for direct R2 streaming/upload
+// Configure Multer memory storage for direct Backblaze B2 streaming/upload
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 15 * 1024 * 1024 } // 15MB limit
@@ -847,8 +847,8 @@ app.post('/api/receipts/upload', upload.single('receipt'), async (req, res) => {
   }
 
   try {
-    // Store in Cloudflare R2 under private 'payment-receipts' folder
-    const uploadRes = await r2Service.uploadFile(
+    // Store in Backblaze B2 under private 'payment-receipts' folder
+    const uploadRes = await b2Service.uploadFile(
       req.file.buffer,
       req.file.originalname,
       req.file.mimetype,
@@ -895,9 +895,28 @@ app.post('/api/receipts/upload', upload.single('receipt'), async (req, res) => {
   }
 });
 
-app.get('/api/receipts', requireAdmin, (req, res) => {
+app.get('/api/receipts', requireAdmin, async (req, res) => {
   const data = db.getData();
-  res.json(data.payment_receipts);
+  const status = b2Service.getStatus();
+
+  if (!status.isConfigured) {
+    return res.json(data.payment_receipts);
+  }
+
+  // Refresh temporary Backblaze B2 presigned URLs for private payment receipts
+  const refreshed = await Promise.all(
+    data.payment_receipts.map(async receipt => {
+      if (receipt.r2_key && !receipt.r2_key.startsWith('/uploads/')) {
+        const signedUrl = await b2Service.getPrivateSignedUrl(receipt.r2_key, 3600);
+        if (signedUrl) {
+          return { ...receipt, file_url: signedUrl };
+        }
+      }
+      return receipt;
+    })
+  );
+
+  res.json(refreshed);
 });
 
 app.post('/api/receipts/:id/verify', requireAdmin, async (req, res) => {
@@ -941,10 +960,10 @@ app.post('/api/receipts/:id/verify', requireAdmin, async (req, res) => {
 });
 
 // -------------------------------------------------------------
-// 8. CLOUDFLARE R2 MEDIA STORAGE MANAGEMENT
+// 8. BACKBLAZE B2 MEDIA STORAGE MANAGEMENT
 // -------------------------------------------------------------
 app.get('/api/storage/status', (req, res) => {
-  const status = r2Service.getStatus();
+  const status = b2Service.getStatus();
   const data = db.getData();
 
   const totalFiles = data.media_assets.length;
@@ -975,7 +994,7 @@ app.post('/api/storage/upload', upload.single('file'), async (req, res) => {
   const isPrivate = req.body.is_private === 'true';
 
   try {
-    const result = await r2Service.uploadFile(
+    const result = await b2Service.uploadFile(
       req.file.buffer,
       req.file.originalname,
       req.file.mimetype,
@@ -1021,8 +1040,8 @@ app.delete('/api/storage/files/:idOrKey', requireAdmin, async (req, res) => {
 
   if (!asset) return res.status(404).json({ error: 'Asset not found' });
 
-  // Delete from R2 or local storage
-  await r2Service.deleteFile(asset.r2_key);
+  // Delete from Backblaze B2 or local storage
+  await b2Service.deleteFile(asset.r2_key);
 
   data.media_assets = data.media_assets.filter(m => m.id !== asset.id);
   db.save();
@@ -1323,7 +1342,7 @@ async function startServer() {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`====================================================`);
     console.log(`⚡ iBs Slayer Server running on http://0.0.0.0:${PORT}`);
-    console.log(`Primary Storage: Cloudflare R2 (${r2Service.getStatus().isConfigured ? 'CONNECTED' : 'LOCAL EMULATION ACTIVE'})`);
+    console.log(`Primary Storage: Backblaze B2 (${b2Service.getStatus().isConfigured ? 'CONNECTED' : 'LOCAL EMULATION ACTIVE'})`);
     console.log(`Initial Admin: ${process.env.ADMIN_INITIAL_EMAIL || 'ibsslayer@gmail.com'}`);
     console.log(`====================================================`);
   });

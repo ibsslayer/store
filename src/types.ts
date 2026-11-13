@@ -263,6 +263,9 @@ export interface UserProfile {
 
 export interface R2StorageStatus {
   isConfigured: boolean;
+  provider?: 'backblaze_b2' | 'cloudflare_r2' | 'local_storage';
+  region?: string;
+  endpoint?: string;
   bucketName?: string;
   publicBaseUrl?: string;
   missingVars: string[];
@@ -272,3 +275,5 @@ export interface R2StorageStatus {
   totalFormattedSize?: string;
   folderBreakdown?: Record<string, { count: number; bytes: number }>;
 }
+
+export type B2StorageStatus = R2StorageStatus;

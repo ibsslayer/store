@@ -266,7 +266,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Upload failed');
 
-      setUploadMessage(`✓ File uploaded successfully to ${data.result.provider === 'cloudflare_r2' ? 'Cloudflare R2' : 'Local Media'}: ${data.asset.file_name}`);
+      setUploadMessage(`✓ File uploaded successfully to ${data.result.provider === 'backblaze_b2' ? 'Backblaze B2' : data.result.provider === 'cloudflare_r2' ? 'Cloudflare R2' : 'Local Media'}: ${data.asset.file_name}`);
       loadAllData();
     } catch (err: any) {
       setUploadMessage(`Error: ${err.message}`);
@@ -387,7 +387,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           >
             <span className="flex items-center gap-2.5">
               <CloudUpload className="w-4 h-4" />
-              <span>Cloudflare R2 Media</span>
+              <span>Backblaze B2 Media</span>
             </span>
             <span className={`w-2 h-2 rounded-full ${storageStatus?.isConfigured ? 'bg-emerald-400' : 'bg-amber-400'}`} />
           </button>
@@ -454,10 +454,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           </button>
         </nav>
 
-        {/* Cloudflare R2 Status Card in Sidebar */}
+        {/* Backblaze B2 Status Card in Sidebar */}
         <div className="p-3 bg-zinc-950 rounded-2xl border border-zinc-800 text-[11px] space-y-1.5">
           <div className="flex items-center justify-between font-bold">
-            <span className="text-zinc-300">Cloudflare R2:</span>
+            <span className="text-zinc-300">Backblaze B2:</span>
             <span className={`px-2 py-0.5 rounded text-[10px] font-black uppercase ${
               storageStatus?.isConfigured
                 ? 'bg-emerald-950 text-emerald-400 border border-emerald-800'
@@ -469,7 +469,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
           <p className="text-zinc-500 text-[10px] leading-tight">
             {storageStatus?.isConfigured
               ? `Bucket: ${storageStatus.bucketName}`
-              : 'Add R2_ACCESS_KEY_ID in .env for live Cloudflare R2 bucket.'}
+              : 'Add B2_REGION & B2_ACCESS_KEY_ID in .env for live Backblaze B2 bucket.'}
           </p>
         </div>
 
@@ -1168,10 +1168,10 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-2xl font-black text-white font-['Outfit']">
-                  Cloudflare R2 Object Storage Manager
+                  Backblaze B2 Object Storage Manager
                 </h2>
                 <p className="text-xs text-zinc-400">
-                  Primary object storage provider for product photos, store logos, banners, and private payment receipts.
+                  Primary S3-compatible object storage provider for product photos, store logos, banners, and private payment receipts.
                 </p>
               </div>
 
@@ -1186,7 +1186,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
               </div>
             </div>
 
-            {/* R2 Configuration Banner */}
+            {/* B2 Configuration Banner */}
             <div className={`p-6 rounded-3xl border shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 ${
               storageStatus?.isConfigured
                 ? 'bg-emerald-950/30 border-emerald-500/40 text-emerald-200'
@@ -1199,7 +1199,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                 </div>
                 {!storageStatus?.isConfigured && (
                   <p className="text-xs text-zinc-400 leading-relaxed max-w-xl">
-                    To connect to live Cloudflare R2 bucket: specify <code>R2_ACCOUNT_ID</code>, <code>R2_ACCESS_KEY_ID</code>, <code>R2_SECRET_ACCESS_KEY</code>, and <code>R2_BUCKET_NAME</code> in your environment variables. The built-in storage service currently emulates storage locally.
+                    To connect to a live Backblaze B2 bucket: specify <code>B2_REGION</code> (or <code>B2_ENDPOINT</code>), <code>B2_ACCESS_KEY_ID</code>, <code>B2_SECRET_ACCESS_KEY</code>, and <code>B2_BUCKET_NAME</code> in your environment variables. The built-in storage service currently emulates storage locally.
                   </p>
                 )}
               </div>
@@ -1210,7 +1210,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                     ? 'bg-emerald-500 text-zinc-950'
                     : 'bg-amber-500 text-zinc-950'
                 }`}>
-                  {storageStatus?.isConfigured ? 'R2 ACTIVE' : 'LOCAL EMULATION'}
+                  {storageStatus?.isConfigured ? 'B2 ACTIVE' : 'LOCAL EMULATION'}
                 </span>
                 <div className="text-[11px] text-zinc-400 font-mono mt-1">
                   Files: {storageStatus?.totalFiles || mediaFiles.length} ({storageStatus?.totalFormattedSize || '0 MB'})
@@ -1221,7 +1221,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
             {/* Drag & Drop Upload Component */}
             <div className="p-6 bg-zinc-900 border border-zinc-800 rounded-3xl space-y-4 shadow-xl">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-zinc-800 text-xs">
-                <span className="font-bold text-white text-sm">Upload New Media Asset to Cloudflare R2</span>
+                <span className="font-bold text-white text-sm">Upload New Media Asset to Backblaze B2</span>
                 <div className="flex items-center gap-2">
                   <span className="text-zinc-400">Target Folder:</span>
                   <select
@@ -1257,7 +1257,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                 <label htmlFor="admin-media-file-input" className="cursor-pointer space-y-2 block">
                   <CloudUpload className="w-10 h-10 text-emerald-400 mx-auto" />
                   <div className="text-sm font-bold text-white">
-                    {isUploadingMedia ? 'Uploading & Processing in Cloudflare R2...' : 'Click to Browse or Drag & Drop Smartphone Images'}
+                    {isUploadingMedia ? 'Uploading & Processing in Backblaze B2...' : 'Click to Browse or Drag & Drop Smartphone Images'}
                   </div>
                   <div className="text-xs text-zinc-500">
                     Supports JPG, PNG, WebP, SVG (Max 15MB) • Stored under <code>{uploadFolder}/</code>
@@ -1297,7 +1297,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                             body: JSON.stringify({ store_logo_url: file.url, store_logo_key: file.r2_key })
                           });
                           refreshSettings();
-                          alert('Store logo updated from Cloudflare R2 asset!');
+                          alert('Store logo updated from Backblaze B2 asset!');
                         }}
                         className="w-full py-1 bg-zinc-800 hover:bg-emerald-600 hover:text-zinc-950 text-zinc-300 text-[10px] font-bold rounded-lg transition"
                       >
@@ -1325,7 +1325,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({ onNaviga
                 Payments & Receipt Verification Desk
               </h2>
               <p className="text-xs text-zinc-400">
-                Audit and approve JazzCash, Easypaisa, and Pakistani bank transfer screenshots stored in R2.
+                Audit and approve JazzCash, Easypaisa, and Pakistani bank transfer screenshots stored in Backblaze B2.
               </p>
             </div>
 
