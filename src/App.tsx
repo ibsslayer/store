@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { AuthProvider } from './context/AuthContext';
+import React, { useState, useEffect, useCallback } from 'react';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { SettingsProvider } from './context/SettingsContext';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { FloatingWhatsApp } from './components/FloatingWhatsApp';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { AiPhoneAdvisorModal } from './components/AiPhoneAdvisorModal';
 
 // Pages
@@ -25,24 +27,122 @@ import { AdminLoginPage } from './pages/AdminLoginPage';
 import { AdminDashboardPage } from './pages/AdminDashboardPage';
 import { InfoPages } from './pages/InfoPages';
 
+const VALID_PAGES = new Set([
+  'home',
+  'shop',
+  'product',
+  'cart',
+  'checkout',
+  'order-confirmation',
+  'track',
+  'giveaways',
+  'deals',
+  'account',
+  'login',
+  'wishlist',
+  'admin-login',
+  'admin',
+  'about',
+  'delivery-info',
+  'returns-refunds',
+  'privacy',
+  'terms',
+  'faqs',
+  'contact'
+]);
+
+function parseRouteFromLocation(): { page: string; param?: string } {
+  if (typeof window === 'undefined') return { page: 'home' };
+
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#/')) {
+    const raw = hash.slice(2);
+    const [rawPath, rawQuery] = raw.split('?');
+    const segments = rawPath.split('/').filter(Boolean);
+    const candidate = segments[0] || 'home';
+    const page = VALID_PAGES.has(candidate) ? candidate : 'home';
+
+    if (page === 'shop' && rawQuery) {
+      return { page: 'shop', param: rawQuery };
+    }
+    if (segments[1]) {
+      return { page, param: decodeURIComponent(segments.slice(1).join('/')) };
+    }
+    return { page };
+  }
+
+  // Fallback to pathname relative to Vite BASE_URL (supports direct URLs & GitHub Pages 404.html)
+  const baseUrl = ((import.meta as any).env?.BASE_URL || '/').replace(/\/+$/, '');
+  let pathname = window.location.pathname || '/';
+  if (baseUrl && baseUrl !== '/' && pathname.startsWith(baseUrl)) {
+    pathname = pathname.slice(baseUrl.length) || '/';
+  }
+  const segments = pathname.split('/').filter(Boolean);
+  const candidate = segments[0] || 'home';
+  const page = VALID_PAGES.has(candidate) ? candidate : 'home';
+  const search = window.location.search?.replace(/^\?/, '');
+
+  if (page === 'shop' && search) {
+    return { page: 'shop', param: search };
+  }
+  if (segments[1]) {
+    return { page, param: decodeURIComponent(segments.slice(1).join('/')) };
+  }
+  return { page };
+}
+
+function buildHashRoute(page: string, param?: string): string {
+  if (page === 'home') return '#/';
+  if (page === 'shop' && param) return `#/shop?${param}`;
+  if (param) return `#/${page}/${encodeURIComponent(param)}`;
+  return `#/${page}`;
+}
+
 export function AppContent() {
-  const [currentPage, setCurrentPage] = useState<string>('home');
-  const [pageParam, setPageParam] = useState<string | undefined>(undefined);
+  const { isAdmin } = useAuth();
+  const initial = parseRouteFromLocation();
+  const [currentPage, setCurrentPage] = useState<string>(initial.page);
+  const [pageParam, setPageParam] = useState<string | undefined>(initial.param);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
 
   // Stored order data for confirmation
   const [lastOrder, setLastOrder] = useState<any>(null);
   const [lastOrderWaUrl, setLastOrderWaUrl] = useState<string | undefined>(undefined);
 
+  // Keep React route synchronized with browser Back/Forward & hash edits
+  useEffect(() => {
+    const syncFromLocation = () => {
+      const next = parseRouteFromLocation();
+      setCurrentPage(next.page);
+      setPageParam(next.param);
+    };
+    window.addEventListener('popstate', syncFromLocation);
+    window.addEventListener('hashchange', syncFromLocation);
+    return () => {
+      window.removeEventListener('popstate', syncFromLocation);
+      window.removeEventListener('hashchange', syncFromLocation);
+    };
+  }, []);
+
   // Scroll to top on navigation
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [currentPage, pageParam]);
 
-  const handleNavigate = (page: string, param?: string) => {
-    setCurrentPage(page);
+  const handleNavigate = useCallback((page: string, param?: string) => {
+    const targetPage = VALID_PAGES.has(page) ? page : 'home';
+    setCurrentPage(targetPage);
     setPageParam(param);
-  };
+
+    const nextHash = buildHashRoute(targetPage, param);
+    if (window.location.hash !== nextHash) {
+      try {
+        window.history.pushState(null, '', nextHash);
+      } catch {
+        window.location.hash = nextHash;
+      }
+    }
+  }, []);
 
   const handleOrderPlaced = (order: any, waUrl: string) => {
     setLastOrder(order);
@@ -85,7 +185,11 @@ export function AppContent() {
       case 'admin-login':
         return <AdminLoginPage onNavigate={handleNavigate} />;
       case 'admin':
-        return <AdminDashboardPage onNavigate={handleNavigate} />;
+        return isAdmin ? (
+          <AdminDashboardPage onNavigate={handleNavigate} />
+        ) : (
+          <AdminLoginPage onNavigate={handleNavigate} />
+        );
       case 'about':
         return <InfoPages pageType="about" onNavigate={handleNavigate} />;
       case 'delivery-info':
@@ -105,7 +209,13 @@ export function AppContent() {
     }
   };
 
-  const isAdminPage = currentPage === 'admin';
+  const isAdminPage = currentPage === 'admin' && isAdmin;
+  const showMobileBottomNav =
+    !isAdminPage &&
+    currentPage !== 'admin-login' &&
+    currentPage !== 'admin' &&
+    currentPage !== 'product' &&
+    currentPage !== 'checkout';
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-['Plus_Jakarta_Sans',sans-serif] selection:bg-emerald-500 selection:text-zinc-950 antialiased">
@@ -119,15 +229,24 @@ export function AppContent() {
       )}
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-4">
-        {renderPage()}
+      <main className="flex-1 max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 pt-2 sm:pt-4">
+        <ErrorBoundary>{renderPage()}</ErrorBoundary>
       </main>
 
       {/* Customer Footer */}
-      {!isAdminPage && <Footer onNavigate={handleNavigate} />}
+      {!isAdminPage && <Footer onNavigate={handleNavigate} hasBottomBar={showMobileBottomNav} />}
+
+      {/* Mobile App Bottom Navigation */}
+      {showMobileBottomNav && (
+        <MobileBottomNav currentPage={currentPage} onNavigate={handleNavigate} />
+      )}
 
       {/* Floating WhatsApp Action Widget */}
-      {!isAdminPage && <FloatingWhatsApp />}
+      {!isAdminPage && (
+        <FloatingWhatsApp
+          hasBottomBar={showMobileBottomNav || currentPage === 'product' || currentPage === 'checkout'}
+        />
+      )}
 
       {/* AI Phone Advisor Modal */}
       <AiPhoneAdvisorModal
@@ -141,14 +260,16 @@ export function AppContent() {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <SettingsProvider>
-        <CartProvider>
-          <WishlistProvider>
-            <AppContent />
-          </WishlistProvider>
-        </CartProvider>
-      </SettingsProvider>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <SettingsProvider>
+          <CartProvider>
+            <WishlistProvider>
+              <AppContent />
+            </WishlistProvider>
+          </CartProvider>
+        </SettingsProvider>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }

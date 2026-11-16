@@ -15,6 +15,18 @@ const ORDERS_STORAGE_KEY = 'ibs_static_orders';
 const GIVEAWAY_ENTRIES_KEY = 'ibs_static_giveaway_entries';
 const REVIEWS_STORAGE_KEY = 'ibs_static_reviews';
 
+const API_BASE = ((import.meta as any).env?.VITE_API_BASE_URL || '').replace(/\/+$/, '');
+
+export function getApiBaseUrl(): string {
+  return API_BASE;
+}
+
+export function isStaticShowcaseMode(): boolean {
+  if (API_BASE) return false;
+  if (typeof window === 'undefined') return false;
+  return window.location.hostname.endsWith('.github.io');
+}
+
 function jsonResponse(data: unknown, status = 200): Response {
   return new Response(JSON.stringify(data), {
     status,
@@ -63,16 +75,39 @@ async function handleStaticApiRequest(pathWithQuery: string, init?: RequestInit)
     } catch {}
   }
 
-  // Settings & Storage Status
+  // Settings, Health & Storage Status
+  if (pathname === '/api/health' && method === 'GET') {
+    return jsonResponse({
+      ok: true,
+      mode: 'static_showcase',
+      service: 'iBs Slayer Storefront (Static Mode)',
+      timestamp: new Date().toISOString(),
+      supabase: {
+        configured: false,
+        connected: false,
+        statusMessage: 'Static Showcase Mode: configure VITE_API_BASE_URL to connect live Supabase backend.'
+      },
+      storage: {
+        isConfigured: false,
+        provider: 'local_storage',
+        missingVars: [],
+        statusMessage: 'Static Showcase Mode (GitHub Pages)'
+      }
+    });
+  }
   if (pathname === '/api/settings' && method === 'GET') {
     return jsonResponse(STATIC_SETTINGS);
   }
   if (pathname === '/api/storage/status' && method === 'GET') {
     return jsonResponse({
       isConfigured: false,
+      provider: 'local_storage',
       missingVars: [],
       statusMessage: 'Static Showcase Mode (GitHub Pages)'
     });
+  }
+  if (pathname === '/api/storage/files' && method === 'GET') {
+    return jsonResponse([]);
   }
 
   // Products list & search
@@ -349,9 +384,16 @@ async function handleStaticApiRequest(pathWithQuery: string, init?: RequestInit)
   }
 
   // Auth / Admin notice when running in static GitHub Pages mode
-  if (pathname.startsWith('/api/auth/')) {
+  if (
+    pathname.startsWith('/api/auth/') ||
+    pathname === '/api/analytics' ||
+    pathname.startsWith('/api/receipts')
+  ) {
     return jsonResponse(
-      { error: 'Account sign-in & Admin Portal require the live Node.js server (full-stack deployment). Storefront browsing & WhatsApp ordering work directly here!' },
+      {
+        error:
+          'Account sign-in & Admin Portal require a live Node.js backend (set VITE_API_BASE_URL in GitHub repository variables). Storefront browsing & WhatsApp ordering work directly here!'
+      },
       503
     );
   }
@@ -366,16 +408,27 @@ export async function apiFetch(input: RequestInfo | URL, init?: RequestInit): Pr
     return window.fetch(input, init);
   }
 
+  // On static hosts (GitHub Pages) with no VITE_API_BASE_URL configured, resolve directly without firing guaranteed 404 requests
+  if (isStaticShowcaseMode()) {
+    return handleStaticApiRequest(urlStr, init);
+  }
+
+  const targetUrl = API_BASE ? `${API_BASE}${urlStr}` : urlStr;
+
   try {
-    const response = await window.fetch(input, init);
+    const response = await window.fetch(targetUrl, init);
     const contentType = response.headers.get('content-type') || '';
 
-    // If Express backend responded with JSON or CSV, return untouched
-    if (contentType.includes('application/json') || contentType.includes('text/csv')) {
+    // If Express backend responded with JSON, CSV, or binary blob, return untouched
+    if (
+      contentType.includes('application/json') ||
+      contentType.includes('text/csv') ||
+      contentType.includes('application/octet-stream')
+    ) {
       return response;
     }
 
-    // Static host (e.g. GitHub Pages) returns 404 HTML for /api/* -> use static fallback
+    // Static host returning HTML 404 for /api/* -> use static fallback cleanly
     return handleStaticApiRequest(urlStr, init);
   } catch {
     return handleStaticApiRequest(urlStr, init);

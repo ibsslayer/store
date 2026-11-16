@@ -3,14 +3,10 @@ import {
   ShieldCheck,
   CreditCard,
   Truck,
-  Building,
-  CheckCircle,
   AlertCircle,
-  ArrowRight,
-  MessageCircle,
   Lock,
-  ChevronRight,
-  Info
+  Info,
+  ChevronDown
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
@@ -44,6 +40,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
   const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
   const [selectedBankId, setSelectedBankId] = useState<string>('');
 
+  const [mobileOrderSummaryOpen, setMobileOrderSummaryOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -96,7 +93,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
         <p className="text-xs text-zinc-400">Please add mobile phones to your cart before proceeding to checkout.</p>
         <button
           onClick={() => onNavigate('shop')}
-          className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold text-xs rounded-xl"
+          className="min-h-[44px] px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold text-xs rounded-xl"
         >
           Browse Phones
         </button>
@@ -108,7 +105,6 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
     e.preventDefault();
     setErrorMessage(null);
 
-    // Validation
     if (!fullName.trim()) return setErrorMessage('Please enter recipient full name');
     if (!phone.trim()) return setErrorMessage('Please enter a valid Pakistani mobile number (03xx-xxxxxxx)');
     if (!streetAddress.trim()) return setErrorMessage('Please enter complete delivery address (House/Shop #, Street, Area)');
@@ -160,36 +156,81 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
   const selectedBank = bankAccounts.find(b => b.id === selectedBankId);
 
   return (
-    <div className="space-y-8 pb-16">
+    <div className="space-y-6 sm:space-y-8 pb-28 lg:pb-16">
       {/* Title */}
       <div className="pb-4 border-b border-zinc-800">
-        <h1 className="text-2xl sm:text-3xl font-black text-white font-['Outfit']">
+        <h1 className="text-xl sm:text-3xl font-black text-white font-['Outfit']">
           Secure Pakistani Checkout
         </h1>
-        <p className="text-xs text-zinc-400 mt-1">
+        <p className="text-xs text-zinc-400 mt-0.5 sm:mt-1">
           Guest checkout enabled. Fast nationwide dispatch with official warranty and PTA certification.
         </p>
       </div>
 
+      {/* Mobile Collapsible Order Summary Accordion */}
+      <div className="lg:hidden bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+        <button
+          type="button"
+          onClick={() => setMobileOrderSummaryOpen(!mobileOrderSummaryOpen)}
+          className="w-full p-4 flex items-center justify-between gap-2 text-xs font-bold"
+        >
+          <span className="flex items-center gap-1.5 text-zinc-200">
+            <span>Order Summary ({items.reduce((s, i) => s + i.quantity, 0)} items)</span>
+            <ChevronDown className={`w-4 h-4 text-zinc-400 transition-transform ${mobileOrderSummaryOpen ? 'rotate-180' : ''}`} />
+          </span>
+          <span className="text-base font-black text-emerald-400 font-mono tabular-nums">
+            Rs. {total.toLocaleString('en-PK')}
+          </span>
+        </button>
+
+        {mobileOrderSummaryOpen && (
+          <div className="px-4 pb-4 pt-2 border-t border-zinc-800 space-y-2.5 text-xs">
+            {items.map(item => (
+              <div key={item.product.id} className="flex items-center justify-between gap-2">
+                <div className="flex items-center gap-2 min-w-0 flex-1">
+                  <span className="font-bold text-emerald-400 font-mono flex-shrink-0">{item.quantity}x</span>
+                  <span className="truncate text-zinc-200">{item.product.name}</span>
+                </div>
+                <span className="font-mono text-zinc-300 font-bold flex-shrink-0 tabular-nums">
+                  Rs. {(item.product.selling_price * item.quantity).toLocaleString('en-PK')}
+                </span>
+              </div>
+            ))}
+            <div className="pt-2 border-t border-zinc-800 space-y-1 text-zinc-400">
+              <div className="flex justify-between">
+                <span>Delivery ({city}):</span>
+                <span className="font-mono text-zinc-200">{deliveryCharges === 0 ? 'FREE' : `Rs. ${deliveryCharges}`}</span>
+              </div>
+              {discountAmount > 0 && (
+                <div className="flex justify-between text-emerald-400">
+                  <span>Discount:</span>
+                  <span className="font-mono">-Rs. {discountAmount.toLocaleString('en-PK')}</span>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
       {errorMessage && (
-        <div className="p-4 rounded-2xl bg-rose-950/70 border border-rose-800 text-rose-200 text-xs flex items-center gap-3">
+        <div className="p-3.5 sm:p-4 rounded-2xl bg-rose-950/70 border border-rose-800 text-rose-200 text-xs flex items-center gap-3">
           <AlertCircle className="w-5 h-5 flex-shrink-0 text-rose-400" />
           <span>{errorMessage}</span>
         </div>
       )}
 
-      <form onSubmit={handleSubmitOrder}>
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+      <form id="checkout-form" onSubmit={handleSubmitOrder}>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
           {/* Left 2 Cols: Delivery Information & Payment Method Selection */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-6 sm:space-y-8">
             {/* 1. RECIPIENT & DELIVERY ADDRESS */}
-            <div className="p-6 bg-zinc-900 border border-zinc-800 rounded-3xl space-y-5">
+            <div className="p-4 sm:p-6 bg-zinc-900 border border-zinc-800 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-5">
               <h3 className="font-bold text-white text-base font-['Outfit'] flex items-center gap-2">
                 <Truck className="w-4 h-4 text-emerald-400" />
-                <span>1. Delivery Destination & Contact Details</span>
+                <span>1. Delivery Details</span>
               </h3>
 
-              <div className="grid sm:grid-cols-2 gap-4 text-xs">
+              <div className="grid sm:grid-cols-2 gap-3.5 sm:gap-4 text-xs">
                 <div>
                   <label className="block font-semibold text-zinc-300 mb-1.5">
                     Full Name <span className="text-rose-400">*</span>:
@@ -200,7 +241,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
                     onChange={e => setFullName(e.target.value)}
                     placeholder="e.g. Muhammad Zeeshan"
                     required
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -214,39 +255,39 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
                     onChange={e => setPhone(e.target.value)}
                     placeholder="0300-1234567"
                     required
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono focus:outline-none focus:border-emerald-500"
+                    className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
                   <label className="block font-semibold text-zinc-300 mb-1.5">
-                    WhatsApp Number (for live updates):
+                    WhatsApp Number (Live Updates):
                   </label>
                   <input
                     type="tel"
                     value={whatsapp}
                     onChange={e => setWhatsapp(e.target.value)}
                     placeholder="0300-1234567"
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono focus:outline-none focus:border-emerald-500"
+                    className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
                 <div>
                   <label className="block font-semibold text-zinc-300 mb-1.5">
-                    Email Address (Optional for Invoice):
+                    Email Address (Optional Invoice):
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     placeholder="name@example.com"
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
               {/* Province & City */}
-              <div className="grid sm:grid-cols-2 gap-4 text-xs">
+              <div className="grid sm:grid-cols-2 gap-3.5 sm:gap-4 text-xs">
                 <div>
                   <label className="block font-semibold text-zinc-300 mb-1.5">
                     Province <span className="text-rose-400">*</span>:
@@ -254,7 +295,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
                   <select
                     value={province}
                     onChange={e => setProvince(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   >
                     {provinces.map(p => (
                       <option key={p} value={p}>{p}</option>
@@ -269,7 +310,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
                   <select
                     value={city}
                     onChange={e => setCity(e.target.value)}
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   >
                     {pakCities.map(c => (
                       <option key={c} value={c}>{c}</option>
@@ -281,7 +322,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
               {/* Complete Street Address */}
               <div className="text-xs">
                 <label className="block font-semibold text-zinc-300 mb-1.5">
-                  Complete Street Address (House/Flat/Shop #, Street, Block, Area) <span className="text-rose-400">*</span>:
+                  Complete Street Address (House/Shop #, Street, Block, Area) <span className="text-rose-400">*</span>:
                 </label>
                 <textarea
                   value={streetAddress}
@@ -302,21 +343,20 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
                   type="text"
                   value={deliveryInstructions}
                   onChange={e => setDeliveryInstructions(e.target.value)}
-                  placeholder="e.g. Call before arrival, leave with security guard, deliver after 2 PM"
-                  className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                  placeholder="e.g. Call before arrival, deliver after 2 PM"
+                  className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                 />
               </div>
             </div>
 
             {/* 2. PAYMENT METHODS SELECTION */}
-            <div className="p-6 bg-zinc-900 border border-zinc-800 rounded-3xl space-y-5">
+            <div className="p-4 sm:p-6 bg-zinc-900 border border-zinc-800 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-5">
               <h3 className="font-bold text-white text-base font-['Outfit'] flex items-center gap-2">
                 <CreditCard className="w-4 h-4 text-emerald-400" />
-                <span>2. Select Payment Method (Pakistan)</span>
+                <span>2. Select Payment Method</span>
               </h3>
 
               <div className="grid sm:grid-cols-2 gap-3 text-xs">
-                {/* 1. Cash on Delivery */}
                 <label
                   className={`p-4 rounded-2xl border cursor-pointer flex flex-col justify-between transition ${
                     paymentMethod === 'cash_on_delivery'
@@ -331,15 +371,14 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
                       name="paymentMethod"
                       checked={paymentMethod === 'cash_on_delivery'}
                       onChange={() => setPaymentMethod('cash_on_delivery')}
-                      className="accent-emerald-500 w-4 h-4"
+                      className="accent-emerald-500 w-5 h-5"
                     />
                   </div>
                   <p className="text-[11px] text-zinc-400 mt-2">
-                    Pay in cash upon physical receipt of parcel from the courier rider (Available nationwide).
+                    Pay in cash upon physical receipt of parcel from the courier rider.
                   </p>
                 </label>
 
-                {/* 2. JazzCash */}
                 <label
                   className={`p-4 rounded-2xl border cursor-pointer flex flex-col justify-between transition ${
                     paymentMethod === 'jazzcash'
@@ -354,15 +393,14 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
                       name="paymentMethod"
                       checked={paymentMethod === 'jazzcash'}
                       onChange={() => setPaymentMethod('jazzcash')}
-                      className="accent-amber-500 w-4 h-4"
+                      className="accent-amber-500 w-5 h-5"
                     />
                   </div>
                   <p className="text-[11px] text-zinc-400 mt-2">
-                    Transfer via JazzCash app or Till ID. Quick verification within 15 minutes.
+                    Transfer via JazzCash app or Till ID. Quick verification within 15 mins.
                   </p>
                 </label>
 
-                {/* 3. Easypaisa */}
                 <label
                   className={`p-4 rounded-2xl border cursor-pointer flex flex-col justify-between transition ${
                     paymentMethod === 'easypaisa'
@@ -377,15 +415,14 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
                       name="paymentMethod"
                       checked={paymentMethod === 'easypaisa'}
                       onChange={() => setPaymentMethod('easypaisa')}
-                      className="accent-emerald-500 w-4 h-4"
+                      className="accent-emerald-500 w-5 h-5"
                     />
                   </div>
                   <p className="text-[11px] text-zinc-400 mt-2">
-                    Direct transfer through Easypaisa mobile app. Upload receipt screenshot on confirmation.
+                    Transfer through Easypaisa app and upload receipt screenshot next.
                   </p>
                 </label>
 
-                {/* 4. Pakistani Bank Transfer */}
                 <label
                   className={`p-4 rounded-2xl border cursor-pointer flex flex-col justify-between transition ${
                     paymentMethod === 'bank_transfer'
@@ -394,22 +431,21 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-indigo-300 text-sm">Pakistani Bank Transfer</span>
+                    <span className="font-bold text-indigo-300 text-sm">Bank Transfer (1-Link)</span>
                     <input
                       type="radio"
                       name="paymentMethod"
                       checked={paymentMethod === 'bank_transfer'}
                       onChange={() => setPaymentMethod('bank_transfer')}
-                      className="accent-indigo-500 w-4 h-4"
+                      className="accent-indigo-500 w-5 h-5"
                     />
                   </div>
                   <p className="text-[11px] text-zinc-400 mt-2">
-                    Meezan Bank, HBL, Bank Alfalah 1-Link / Raast transfer. Upload receipt after placing order.
+                    Meezan Bank, HBL, Bank Alfalah Raast transfer. Upload receipt after order.
                   </p>
                 </label>
               </div>
 
-              {/* Dynamic Instructions per payment method */}
               {paymentMethod === 'jazzcash' && (
                 <div className="p-4 bg-amber-950/20 border border-amber-900/60 rounded-2xl space-y-2 text-xs text-amber-200">
                   <div className="font-bold text-amber-400 flex items-center gap-1.5">
@@ -448,8 +484,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
                       >
                         <div className="font-bold text-white text-sm">{bank.bank_name}</div>
                         <div className="text-zinc-400">Title: <strong>{bank.account_title}</strong></div>
-                        <div className="font-mono text-zinc-300">A/C: {bank.account_number}</div>
-                        <div className="font-mono text-indigo-300 text-[11px] truncate">IBAN: {bank.iban}</div>
+                        <div className="font-mono text-zinc-300 break-all">A/C: {bank.account_number}</div>
+                        <div className="font-mono text-indigo-300 text-[11px] break-all">IBAN: {bank.iban}</div>
                       </div>
                     ))}
                   </div>
@@ -467,7 +503,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
 
           {/* Right Col: Order Snapshot & Submit Button */}
           <div className="space-y-5">
-            <div className="p-6 bg-zinc-900 border border-zinc-800 rounded-3xl space-y-5 shadow-xl">
+            <div className="p-4 sm:p-6 bg-zinc-900 border border-zinc-800 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-5 shadow-xl">
               <h3 className="font-bold text-white text-base font-['Outfit'] pb-3 border-b border-zinc-800">
                 Order Review
               </h3>
@@ -475,12 +511,12 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
               {/* Items List */}
               <div className="divide-y divide-zinc-800 max-h-60 overflow-y-auto space-y-2">
                 {items.map(item => (
-                  <div key={item.product.id} className="pt-2 flex items-center justify-between text-xs">
-                    <div className="flex items-center gap-2.5 truncate max-w-[200px]">
-                      <span className="font-bold text-emerald-400 font-mono">{item.quantity}x</span>
+                  <div key={item.product.id} className="pt-2 flex items-center justify-between gap-2 text-xs">
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                      <span className="font-bold text-emerald-400 font-mono flex-shrink-0">{item.quantity}x</span>
                       <span className="truncate text-zinc-200">{item.product.name}</span>
                     </div>
-                    <span className="font-mono text-zinc-300 font-bold">
+                    <span className="font-mono text-zinc-300 font-bold flex-shrink-0 tabular-nums">
                       Rs. {(item.product.selling_price * item.quantity).toLocaleString('en-PK')}
                     </span>
                   </div>
@@ -489,45 +525,45 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
 
               {/* Totals Calculation */}
               <div className="pt-3 border-t border-zinc-800 space-y-2 text-xs">
-                <div className="flex justify-between text-zinc-400">
+                <div className="flex justify-between text-zinc-400 gap-2">
                   <span>Subtotal:</span>
-                  <span className="font-mono text-zinc-200">Rs. {subtotal.toLocaleString('en-PK')}</span>
+                  <span className="font-mono text-zinc-200 tabular-nums">Rs. {subtotal.toLocaleString('en-PK')}</span>
                 </div>
-                <div className="flex justify-between text-zinc-400">
+                <div className="flex justify-between text-zinc-400 gap-2">
                   <span>Delivery ({city}):</span>
-                  <span className="font-mono text-zinc-200">
+                  <span className="font-mono text-zinc-200 tabular-nums">
                     {deliveryCharges === 0 ? <strong className="text-emerald-400">FREE</strong> : `Rs. ${deliveryCharges}`}
                   </span>
                 </div>
                 {discountAmount > 0 && (
-                  <div className="flex justify-between text-emerald-400 font-semibold">
+                  <div className="flex justify-between text-emerald-400 font-semibold gap-2">
                     <span>Discount:</span>
-                    <span className="font-mono">-Rs. {discountAmount.toLocaleString('en-PK')}</span>
+                    <span className="font-mono tabular-nums">-Rs. {discountAmount.toLocaleString('en-PK')}</span>
                   </div>
                 )}
-                <div className="pt-2 border-t border-zinc-800 flex justify-between items-baseline font-bold text-white">
+                <div className="pt-2 border-t border-zinc-800 flex justify-between items-baseline font-bold text-white gap-2">
                   <span>Total Payable:</span>
-                  <span className="text-2xl font-black text-emerald-400 font-mono tracking-tight">
+                  <span className="text-xl sm:text-2xl font-black text-emerald-400 font-mono tracking-tight tabular-nums">
                     Rs. {total.toLocaleString('en-PK')}
                   </span>
                 </div>
               </div>
 
-              {/* Submit Order Button */}
+              {/* Submit Order Button (Desktop) */}
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-zinc-950 font-black text-sm rounded-2xl flex items-center justify-center gap-2 shadow-2xl shadow-emerald-500/30 transition active:scale-95"
+                className="w-full min-h-[48px] py-3.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-zinc-950 font-black text-sm rounded-2xl flex items-center justify-center gap-2 shadow-2xl shadow-emerald-500/30 transition active:scale-95"
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
                     <span className="animate-spin">⏳</span>
-                    <span>Securing Stock & Placing Order...</span>
+                    <span>Securing Stock...</span>
                   </span>
                 ) : (
                   <>
                     <Lock className="w-4 h-4" />
-                    <span>Confirm & Place Order</span>
+                    <span>Confirm &amp; Place Order</span>
                   </>
                 )}
               </button>
@@ -538,13 +574,34 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({ onNavigate, onOrderP
                   iBs Slayer Guarantee
                 </div>
                 <p>
-                  100% PTA Approved & Officially Sealed Box. Track your parcel 24/7 with SMS alerts.
+                  100% PTA Approved &amp; Officially Sealed Box. Track your parcel 24/7 with SMS alerts.
                 </p>
               </div>
             </div>
           </div>
         </div>
       </form>
+
+      {/* MOBILE FIXED STICKY PLACE ORDER BAR */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-zinc-950/95 backdrop-blur-md border-t border-zinc-800 px-3 py-2.5 pb-safe shadow-2xl">
+        <div className="flex items-center justify-between gap-3 max-w-lg mx-auto">
+          <div className="min-w-0">
+            <div className="text-[10px] text-zinc-400 uppercase font-semibold">Total Payable</div>
+            <div className="text-base font-black text-emerald-400 font-mono tabular-nums">
+              Rs. {total.toLocaleString('en-PK')}
+            </div>
+          </div>
+          <button
+            type="submit"
+            form="checkout-form"
+            disabled={isSubmitting}
+            className="min-h-[44px] px-5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-zinc-950 font-black text-xs rounded-xl flex items-center gap-1.5 shadow-lg shadow-emerald-500/20 flex-shrink-0"
+          >
+            <Lock className="w-3.5 h-3.5" />
+            <span>{isSubmitting ? 'Placing...' : 'Place Order'}</span>
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

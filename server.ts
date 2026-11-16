@@ -1,15 +1,43 @@
 import express from 'express';
 import path from 'path';
+import crypto from 'crypto';
 import multer from 'multer';
 import dotenv from 'dotenv';
 import { GoogleGenAI } from '@google/genai';
 import { db, hashPassword, verifyPassword, Product, Order, OrderItem } from './server/db';
 import { b2Service } from './server/r2';
+import { supabaseService } from './server/supabase';
 
 dotenv.config();
 
 const app = express();
 const PORT = Number(process.env.PORT) || 3000;
+
+// CORS for separated GitHub Pages frontend -> hosted Node.js backend
+const defaultAllowedOrigins = [
+  'https://ibsslayer.github.io',
+  'http://localhost:3000',
+  'http://localhost:5173'
+];
+const envAllowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(o => o.trim().replace(/\/+$/, ''))
+  .filter(Boolean);
+const allowedOrigins = Array.from(new Set([...defaultAllowedOrigins, ...envAllowedOrigins]));
+
+app.use((req, res, next) => {
+  const origin = (req.headers.origin || '').replace(/\/+$/, '');
+  if (!origin || allowedOrigins.includes(origin) || allowedOrigins.includes('*')) {
+    if (origin) res.setHeader('Access-Control-Allow-Origin', origin);
+    res.setHeader('Vary', 'Origin');
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+  next();
+});
 
 app.use(express.json({ limit: '25mb' }));
 app.use(express.urlencoded({ extended: true, limit: '25mb' }));
@@ -23,17 +51,41 @@ const upload = multer({
   limits: { fileSize: 15 * 1024 * 1024 } // 15MB limit
 });
 
-// Simple JWT / Token simulator for session handling
+// HMAC-SHA256 Signed Session Tokens
+const TOKEN_SECRET =
+  process.env.SESSION_SECRET ||
+  crypto
+    .createHash('sha256')
+    .update(process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.ADMIN_INITIAL_PASSWORD || 'ibs-slayer-server-secret-2026')
+    .digest('hex');
+
+const TOKEN_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
+
 function generateToken(userId: string, role: string): string {
-  const payload = Buffer.from(JSON.stringify({ userId, role, time: Date.now() })).toString('base64');
-  return `pkm_${payload}`;
+  const payload = Buffer.from(
+    JSON.stringify({ userId, role, time: Date.now(), exp: Date.now() + TOKEN_TTL_MS })
+  ).toString('base64url');
+  const sig = crypto.createHmac('sha256', TOKEN_SECRET).update(payload).digest('base64url');
+  return `pkm_${payload}.${sig}`;
 }
 
 function parseToken(token?: string): { userId: string; role: string } | null {
   if (!token || !token.startsWith('pkm_')) return null;
   try {
-    const raw = Buffer.from(token.replace('pkm_', ''), 'base64').toString('utf-8');
-    return JSON.parse(raw);
+    const rawBody = token.slice(4);
+    const [payload, sig] = rawBody.split('.');
+    if (!payload || !sig) return null;
+    const expectedSig = crypto.createHmac('sha256', TOKEN_SECRET).update(payload).digest('base64url');
+    const sigBuf = Buffer.from(sig);
+    const expBuf = Buffer.from(expectedSig);
+    if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
+      return null;
+    }
+    const parsed = JSON.parse(Buffer.from(payload, 'base64url').toString('utf-8'));
+    if (parsed.exp && Date.now() > Number(parsed.exp)) {
+      return null;
+    }
+    return parsed;
   } catch {
     return null;
   }
@@ -49,6 +101,19 @@ function requireAdmin(req: express.Request, res: express.Response, next: express
   }
   next();
 }
+
+// Health & Service Diagnostics Endpoint (zero secrets exposed)
+app.get('/api/health', async (_req, res) => {
+  const supabaseStatus = await supabaseService.testConnectivity();
+  const storageStatus = b2Service.getStatus();
+  res.json({
+    ok: true,
+    service: 'iBs Slayer API',
+    timestamp: new Date().toISOString(),
+    supabase: supabaseStatus,
+    storage: storageStatus
+  });
+});
 
 // -------------------------------------------------------------
 // 1. AUTHENTICATION ROUTES
@@ -66,12 +131,12 @@ app.post('/api/auth/admin-login', (req, res) => {
     return res.status(401).json({ error: 'Invalid administrator credentials' });
   }
 
-  const isPasswordValid =
-    verifyPassword(password, profile.password_hash) ||
-    password === (process.env.ADMIN_INITIAL_PASSWORD || 'ChangeMeOnFirstLogin2026!') ||
-    password === '2026' ||
-    password === 'AdminIbsSlayer2026!#' ||
-    password === 'AdminPakMobile2026!#';
+  const isInitialSetupPassword =
+    Boolean(profile.must_change_password) &&
+    (password === (process.env.ADMIN_INITIAL_PASSWORD || 'ChangeMeOnFirstLogin2026!') ||
+      password === '2026');
+
+  const isPasswordValid = verifyPassword(password, profile.password_hash) || isInitialSetupPassword;
 
   if (!isPasswordValid) {
     return res.status(401).json({ error: 'Invalid administrator credentials' });
@@ -322,6 +387,29 @@ app.get('/api/products', (req, res) => {
   res.json(list);
 });
 
+// CSV Export (must appear before :slugOrId route)
+app.get('/api/products/export-csv', requireAdmin, (req, res) => {
+  const data = db.getData();
+  const headers = ['ID', 'Name', 'Brand', 'Category', 'SKU', 'Original Price', 'Selling Price', 'Stock', 'PTA Status', 'Condition'];
+  const rows = data.products.map(p => [
+    p.id,
+    `"${p.name.replace(/"/g, '""')}"`,
+    p.brand,
+    p.category,
+    p.sku,
+    p.original_price,
+    p.selling_price,
+    p.stock,
+    p.pta_status,
+    p.condition
+  ]);
+
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  res.setHeader('Content-Type', 'text/csv');
+  res.setHeader('Content-Disposition', 'attachment; filename="ibsslayer-products.csv"');
+  res.send(csv);
+});
+
 app.get('/api/products/:slugOrId', (req, res) => {
   const { slugOrId } = req.params;
   const data = db.getData();
@@ -395,6 +483,7 @@ app.post('/api/products', requireAdmin, (req, res) => {
 
   data.products.unshift(newProduct);
   db.save();
+  void supabaseService.syncProduct(newProduct);
 
   res.status(201).json(newProduct);
 });
@@ -416,14 +505,17 @@ app.put('/api/products/:id', requireAdmin, (req, res) => {
 
   data.products[index] = updated;
   db.save();
+  void supabaseService.syncProduct(updated);
   res.json(updated);
 });
 
 app.delete('/api/products/:id', requireAdmin, (req, res) => {
   const { id } = req.params;
   const data = db.getData();
+  const target = data.products.find(p => p.id === id);
   data.products = data.products.filter(p => p.id !== id);
   db.save();
+  if (target?.sku) void supabaseService.deleteProductBySku(target.sku);
   res.json({ success: true, message: 'Product deleted' });
 });
 
@@ -451,30 +543,8 @@ app.post('/api/products/:id/stock', requireAdmin, (req, res) => {
   });
 
   db.save();
+  void supabaseService.syncProduct(product);
   res.json({ success: true, stock: product.stock });
-});
-
-// CSV Export
-app.get('/api/products/export-csv', requireAdmin, (req, res) => {
-  const data = db.getData();
-  const headers = ['ID', 'Name', 'Brand', 'Category', 'SKU', 'Original Price', 'Selling Price', 'Stock', 'PTA Status', 'Condition'];
-  const rows = data.products.map(p => [
-    p.id,
-    `"${p.name.replace(/"/g, '""')}"`,
-    p.brand,
-    p.category,
-    p.sku,
-    p.original_price,
-    p.selling_price,
-    p.stock,
-    p.pta_status,
-    p.condition
-  ]);
-
-  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
-  res.setHeader('Content-Type', 'text/csv');
-  res.setHeader('Content-Disposition', 'attachment; filename="ibsslayer-products.csv"');
-  res.send(csv);
 });
 
 // -------------------------------------------------------------
@@ -638,6 +708,7 @@ app.post('/api/orders', (req, res) => {
 
   data.orders.unshift(newOrder);
   db.save();
+  void supabaseService.syncOrder(newOrder);
 
   // WhatsApp Order Confirmation Link generation
   const waPhone = (data.settings.whatsapp_number || '+923001234567').replace(/[^0-9]/g, '');
@@ -737,6 +808,7 @@ app.put('/api/orders/:id/status', requireAdmin, (req, res) => {
   order.updated_at = new Date().toISOString();
 
   db.save();
+  void supabaseService.syncOrder(order);
   res.json({ success: true, order });
 });
 
@@ -884,6 +956,8 @@ app.post('/api/receipts/upload', upload.single('receipt'), async (req, res) => {
     });
 
     db.save();
+    void supabaseService.syncReceipt(receipt);
+    void supabaseService.syncOrder(order);
 
     res.json({
       success: true,
@@ -985,7 +1059,7 @@ app.get('/api/storage/status', (req, res) => {
   });
 });
 
-app.post('/api/storage/upload', upload.single('file'), async (req, res) => {
+app.post('/api/storage/upload', requireAdmin, upload.single('file'), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: 'No file provided' });
   }
@@ -1016,6 +1090,7 @@ app.post('/api/storage/upload', upload.single('file'), async (req, res) => {
 
     data.media_assets.unshift(asset);
     db.save();
+    void supabaseService.syncMediaAsset(asset);
 
     res.json({ success: true, asset, result });
   } catch (err: any) {
@@ -1045,6 +1120,7 @@ app.delete('/api/storage/files/:idOrKey', requireAdmin, async (req, res) => {
 
   data.media_assets = data.media_assets.filter(m => m.id !== asset.id);
   db.save();
+  void supabaseService.deleteMediaAsset(asset.r2_key);
 
   res.json({ success: true, message: 'Asset deleted' });
 });
@@ -1068,6 +1144,7 @@ app.put('/api/settings', requireAdmin, (req, res) => {
     timestamp: new Date().toISOString()
   });
   db.save();
+  void supabaseService.syncSettings(data.settings);
   res.json(data.settings);
 });
 
@@ -1339,10 +1416,13 @@ async function startServer() {
     });
   }
 
+  const sbStatus = await supabaseService.testConnectivity();
+
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`====================================================`);
     console.log(`⚡ iBs Slayer Server running on http://0.0.0.0:${PORT}`);
-    console.log(`Primary Storage: Backblaze B2 (${b2Service.getStatus().isConfigured ? 'CONNECTED' : 'LOCAL EMULATION ACTIVE'})`);
+    console.log(`Database (Supabase): ${sbStatus.statusMessage}`);
+    console.log(`Primary Storage (Backblaze B2): ${b2Service.getStatus().statusMessage}`);
     console.log(`Initial Admin: ${process.env.ADMIN_INITIAL_EMAIL || 'ibsslayer@gmail.com'}`);
     console.log(`====================================================`);
   });

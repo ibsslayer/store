@@ -352,30 +352,74 @@ CREATE TABLE IF NOT EXISTS public.admin_activity_logs (
 
 -- =========================================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
+-- Note: Server backend uses SUPABASE_SERVICE_ROLE_KEY strictly server-side.
 -- =========================================================================
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_roles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.customers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.customer_addresses ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.brands ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.categories ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.products ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.product_images ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.inventory_movements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.carts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.cart_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.orders ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.order_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.bank_accounts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.payment_receipts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.coupons ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.promotions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.giveaways ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.giveaway_entries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.wishlists ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.website_settings ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.media_assets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.admin_activity_logs ENABLE ROW LEVEL SECURITY;
 
--- Products are readable by anyone
+-- Public storefront read-only tables
+CREATE POLICY "Public brands view" ON public.brands FOR SELECT USING (is_active = true);
+CREATE POLICY "Public categories view" ON public.categories FOR SELECT USING (is_active = true);
 CREATE POLICY "Public products view" ON public.products FOR SELECT USING (is_published = true);
+CREATE POLICY "Public product images view" ON public.product_images FOR SELECT USING (true);
+CREATE POLICY "Public bank accounts view" ON public.bank_accounts FOR SELECT USING (is_enabled = true);
+CREATE POLICY "Public promotions view" ON public.promotions FOR SELECT USING (is_active = true);
+CREATE POLICY "Public giveaways view" ON public.giveaways FOR SELECT USING (true);
+CREATE POLICY "Public reviews view" ON public.reviews FOR SELECT USING (is_approved = true);
+CREATE POLICY "Public settings view" ON public.website_settings FOR SELECT USING (true);
 
--- Orders: Customers can only view their own orders; admins can view all
+-- Profiles: Users can only read/update their own profile
+CREATE POLICY "Users view own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
+CREATE POLICY "Users update own profile" ON public.profiles FOR UPDATE USING (auth.uid() = id);
+
+-- Wishlists: Users can only access their own wishlist items
+CREATE POLICY "Users manage own wishlist" ON public.wishlists FOR ALL USING (auth.uid() = user_id);
+
+-- Orders & Order Items: Customers view only their own orders; admins view all
 CREATE POLICY "Customer view own orders" ON public.orders FOR SELECT
 USING (auth.uid() = customer_id OR EXISTS (
     SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role IN ('admin', 'super_admin')
 ));
 
--- Payment receipts: Strictly private, only customer owner or admin
+CREATE POLICY "Customer view own order items" ON public.order_items FOR SELECT
+USING (EXISTS (
+    SELECT 1 FROM public.orders o WHERE o.id = order_items.order_id AND (o.customer_id = auth.uid() OR EXISTS (
+        SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role IN ('admin', 'super_admin')
+    ))
+));
+
+-- Payment receipts (Backblaze B2 private folder): Strictly private, only customer owner or admin
 CREATE POLICY "Private receipt view" ON public.payment_receipts FOR SELECT
 USING (EXISTS (
     SELECT 1 FROM public.orders o WHERE o.id = payment_receipts.order_id AND (o.customer_id = auth.uid() OR EXISTS (
         SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role IN ('admin', 'super_admin')
     ))
+));
+
+-- Admin-only audit logs
+CREATE POLICY "Admin audit logs view" ON public.admin_activity_logs FOR SELECT
+USING (EXISTS (
+    SELECT 1 FROM public.user_roles WHERE user_id = auth.uid() AND role IN ('admin', 'super_admin')
 ));

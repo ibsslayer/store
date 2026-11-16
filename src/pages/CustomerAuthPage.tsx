@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LogIn, UserPlus, ShieldCheck, AlertCircle, ArrowRight } from 'lucide-react';
+import { LogIn, UserPlus, ShieldCheck, AlertCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface CustomerAuthPageProps {
@@ -44,13 +44,13 @@ export const CustomerAuthPage: React.FC<CustomerAuthPageProps> = ({ onNavigate }
   };
 
   return (
-    <div className="max-w-md mx-auto py-12 pb-20">
-      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 sm:p-8 shadow-2xl space-y-6">
+    <div className="max-w-md mx-auto py-6 sm:py-12 pb-16">
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl space-y-5 sm:space-y-6">
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mx-auto flex items-center justify-center font-black text-sm">
             iBs
           </div>
-          <h2 className="text-2xl font-black text-white font-['Outfit']">
+          <h2 className="text-xl sm:text-2xl font-black text-white font-['Outfit']">
             {isRegister ? 'Create Customer Account' : 'Welcome to iBs Slayer'}
           </h2>
           <p className="text-xs text-zinc-400">
@@ -67,7 +67,7 @@ export const CustomerAuthPage: React.FC<CustomerAuthPageProps> = ({ onNavigate }
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4 text-xs">
+        <form onSubmit={handleSubmit} className="space-y-3.5 sm:space-y-4 text-xs">
           {isRegister && (
             <>
               <div>
@@ -80,7 +80,7 @@ export const CustomerAuthPage: React.FC<CustomerAuthPageProps> = ({ onNavigate }
                   onChange={e => setFullName(e.target.value)}
                   placeholder="e.g. Kamran Ali"
                   required
-                  className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white"
+                  className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white"
                 />
               </div>
 
@@ -94,7 +94,7 @@ export const CustomerAuthPage: React.FC<CustomerAuthPageProps> = ({ onNavigate }
                   onChange={e => setPhone(e.target.value)}
                   placeholder="0300-1234567"
                   required
-                  className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono"
+                  className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono"
                 />
               </div>
 
@@ -107,7 +107,7 @@ export const CustomerAuthPage: React.FC<CustomerAuthPageProps> = ({ onNavigate }
                   value={whatsapp}
                   onChange={e => setWhatsapp(e.target.value)}
                   placeholder="0300-1234567"
-                  className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono"
+                  className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono"
                 />
               </div>
             </>
@@ -123,7 +123,7 @@ export const CustomerAuthPage: React.FC<CustomerAuthPageProps> = ({ onNavigate }
               onChange={e => setEmail(e.target.value)}
               placeholder="user@example.com"
               required
-              className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white"
+              className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white"
             />
           </div>
 
@@ -137,14 +137,14 @@ export const CustomerAuthPage: React.FC<CustomerAuthPageProps> = ({ onNavigate }
               onChange={e => setPassword(e.target.value)}
               placeholder="••••••••"
               required
-              className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono"
+              className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono"
             />
           </div>
 
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-zinc-950 font-black text-xs rounded-xl flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 transition active:scale-95"
+            className="w-full min-h-[46px] py-3.5 bg-emerald-500 hover:bg-emerald-400 disabled:opacity-50 text-zinc-950 font-black text-xs rounded-xl flex items-center justify-center gap-2 shadow-xl shadow-emerald-500/20 transition active:scale-95"
           >
             {isLoading ? (
               <span>Processing...</span>
@@ -168,17 +168,17 @@ export const CustomerAuthPage: React.FC<CustomerAuthPageProps> = ({ onNavigate }
               Already have an account?{' '}
               <button
                 onClick={() => { setIsRegister(false); setError(null); }}
-                className="text-emerald-400 font-bold hover:underline"
+                className="text-emerald-400 font-bold hover:underline py-1"
               >
                 Sign In
               </button>
             </span>
           ) : (
             <span>
-              Don't have an account?{' '}
+              Don&apos;t have an account?{' '}
               <button
                 onClick={() => { setIsRegister(true); setError(null); }}
-                className="text-emerald-400 font-bold hover:underline"
+                className="text-emerald-400 font-bold hover:underline py-1"
               >
                 Register Here
               </button>
@@ -186,10 +186,10 @@ export const CustomerAuthPage: React.FC<CustomerAuthPageProps> = ({ onNavigate }
           )}
         </div>
 
-        <div className="text-center pt-2">
+        <div className="text-center pt-1">
           <button
             onClick={() => onNavigate('admin-login')}
-            className="text-[11px] text-zinc-500 hover:text-zinc-300 transition flex items-center justify-center gap-1 mx-auto"
+            className="min-h-[36px] text-[11px] text-zinc-500 hover:text-zinc-300 transition flex items-center justify-center gap-1 mx-auto"
           >
             <ShieldCheck className="w-3.5 h-3.5" />
             <span>Store Administrator Login Portal</span>

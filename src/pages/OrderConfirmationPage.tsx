@@ -2,14 +2,10 @@ import React, { useState, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import {
   CheckCircle,
-  Truck,
   MessageCircle,
   UploadCloud,
   FileCheck,
-  ShieldCheck,
-  ArrowRight,
-  Clock,
-  AlertCircle
+  ArrowRight
 } from 'lucide-react';
 import { Order } from '../types';
 import { apiFetch } from '../lib/staticFallback';
@@ -28,6 +24,8 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
   onNavigate
 }) => {
   const [order, setOrder] = useState<Order | null>(orderData || null);
+  const [isLoadingOrder, setIsLoadingOrder] = useState<boolean>(!orderData && Boolean(orderId));
+  const [orderLoadError, setOrderLoadError] = useState<string | null>(null);
   const [receiptFile, setReceiptFile] = useState<File | null>(null);
   const [transactionRef, setTransactionRef] = useState('');
   const [receiptNotes, setReceiptNotes] = useState('');
@@ -36,7 +34,14 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
   const [uploadError, setUploadError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Fire celebration confetti
+    if (orderData) {
+      setOrder(orderData);
+      setIsLoadingOrder(false);
+      setOrderLoadError(null);
+    }
+  }, [orderData]);
+
+  useEffect(() => {
     try {
       confetti({
         particleCount: 80,
@@ -46,10 +51,18 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
     } catch {}
 
     if (!order && orderId) {
-      apiFetch(`/api/orders/${orderId}`)
-        .then(res => res.json())
-        .then(data => setOrder(data))
-        .catch(() => {});
+      setIsLoadingOrder(true);
+      setOrderLoadError(null);
+      apiFetch(`/api/orders/${encodeURIComponent(orderId)}`)
+        .then(async res => {
+          const data = await res.json();
+          if (!res.ok) throw new Error(data?.error || 'Order record not found');
+          setOrder(data);
+        })
+        .catch((err: any) => {
+          setOrderLoadError(err?.message || 'Unable to load order details.');
+        })
+        .finally(() => setIsLoadingOrder(false));
     }
   }, [orderId]);
 
@@ -85,11 +98,39 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
     }
   };
 
-  if (!order) {
+  if (isLoadingOrder) {
     return (
       <div className="py-20 text-center space-y-4">
-        <div className="animate-spin text-3xl">⏳</div>
+        <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto" />
         <p className="text-zinc-400 text-sm">Fetching order details...</p>
+      </div>
+    );
+  }
+
+  if (!order) {
+    return (
+      <div className="max-w-md mx-auto my-12 p-6 sm:p-8 bg-zinc-900 border border-zinc-800 rounded-3xl text-center space-y-4">
+        <h2 className="text-xl font-black text-white font-['Outfit']">Order Details Unavailable</h2>
+        <p className="text-xs text-zinc-400 leading-relaxed">
+          {orderLoadError ||
+            'No active order session was found. Use your order number and mobile phone on the tracking page to view status.'}
+        </p>
+        <div className="flex flex-col sm:flex-row gap-2.5 pt-1">
+          <button
+            type="button"
+            onClick={() => onNavigate('track')}
+            className="flex-1 min-h-[44px] px-4 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-black text-xs rounded-xl transition"
+          >
+            Track Existing Order
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('shop')}
+            className="flex-1 min-h-[44px] px-4 py-2.5 bg-zinc-800 hover:bg-zinc-700 text-white font-bold text-xs rounded-xl transition"
+          >
+            Browse Storefront
+          </button>
+        </div>
       </div>
     );
   }
@@ -97,18 +138,18 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
   const isPrepaid = order.payment_method !== 'cash_on_delivery';
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8 pb-16">
+    <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8 pb-12 sm:pb-16">
       {/* 1. SUCCESS HERO */}
-      <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-8 text-center space-y-4 shadow-2xl relative overflow-hidden">
-        <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mx-auto flex items-center justify-center">
-          <CheckCircle className="w-10 h-10" />
+      <div className="bg-zinc-900 border border-zinc-800 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-center space-y-4 shadow-2xl relative overflow-hidden">
+        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mx-auto flex items-center justify-center">
+          <CheckCircle className="w-8 h-8 sm:w-10 sm:h-10" />
         </div>
 
         <div className="space-y-1">
-          <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+          <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-emerald-400">
             Order Successfully Placed!
           </span>
-          <h1 className="text-3xl sm:text-4xl font-black text-white font-['Outfit']">
+          <h1 className="text-2xl sm:text-4xl font-black text-white font-['Outfit']">
             Shukriya, {order.customer_name}!
           </h1>
           <p className="text-xs text-zinc-400 max-w-md mx-auto">
@@ -117,30 +158,30 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
         </div>
 
         {/* Order Number Badge */}
-        <div className="p-4 bg-zinc-950 rounded-2xl border border-zinc-800 max-w-sm mx-auto flex items-center justify-between">
-          <div className="text-left">
+        <div className="p-3.5 sm:p-4 bg-zinc-950 rounded-2xl border border-zinc-800 max-w-sm mx-auto flex flex-wrap items-center justify-between gap-3">
+          <div className="text-left min-w-0">
             <div className="text-[10px] text-zinc-500 uppercase font-semibold">Unique Order Number</div>
-            <div className="text-lg font-black text-emerald-400 font-mono tracking-wider">
+            <div className="text-base sm:text-lg font-black text-emerald-400 font-mono tracking-wider break-all">
               {order.order_number}
             </div>
           </div>
           <button
             onClick={() => onNavigate('track')}
-            className="px-3 py-1.5 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg text-xs font-bold transition flex items-center gap-1"
+            className="min-h-[40px] px-3.5 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 flex-shrink-0"
           >
-            <span>Track Order</span>
+            <span>Track</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {/* WhatsApp confirmation CTA */}
         {whatsappUrl && (
-          <div className="pt-2">
+          <div className="pt-1">
             <a
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/20 transition active:scale-95"
+              className="w-full sm:w-auto min-h-[44px] inline-flex items-center justify-center gap-2 px-5 py-3 bg-emerald-600 hover:bg-emerald-500 text-zinc-950 font-bold text-xs rounded-xl shadow-lg shadow-emerald-600/20 transition active:scale-95"
             >
               <MessageCircle className="w-4 h-4 fill-current" />
               <span>Confirm on WhatsApp for Priority Dispatch</span>
@@ -149,20 +190,20 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
         )}
       </div>
 
-      {/* 2. PAYMENT RECEIPT UPLOAD (For JazzCash, Easypaisa, Bank Transfer) */}
+      {/* 2. PAYMENT RECEIPT UPLOAD */}
       {isPrepaid && (
-        <div className="p-6 sm:p-8 bg-zinc-900 border border-zinc-800 rounded-3xl space-y-5 shadow-xl">
-          <div className="flex items-start justify-between gap-4 pb-4 border-b border-zinc-800">
+        <div className="p-4 sm:p-8 bg-zinc-900 border border-zinc-800 rounded-2xl sm:rounded-3xl space-y-5 shadow-xl">
+          <div className="flex flex-wrap items-start justify-between gap-3 pb-4 border-b border-zinc-800">
             <div>
-              <h3 className="text-lg font-bold text-white font-['Outfit'] flex items-center gap-2">
-                <UploadCloud className="w-5 h-5 text-emerald-400" />
-                <span>Upload Payment Receipt / Screenshot</span>
+              <h3 className="text-base sm:text-lg font-bold text-white font-['Outfit'] flex items-center gap-2">
+                <UploadCloud className="w-5 h-5 text-emerald-400 flex-shrink-0" />
+                <span>Upload Payment Receipt</span>
               </h3>
               <p className="text-xs text-zinc-400 mt-0.5">
-                Saved securely in Backblaze B2 storage for verification by our accounts team.
+                Saved securely in Backblaze B2 storage for accounts verification.
               </p>
             </div>
-            <span className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[11px] font-bold uppercase tracking-wider">
+            <span className="px-2.5 py-1 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 text-[10px] sm:text-[11px] font-bold uppercase tracking-wider">
               Awaiting Verification
             </span>
           </div>
@@ -193,7 +234,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
                     value={transactionRef}
                     onChange={e => setTransactionRef(e.target.value)}
                     placeholder="e.g. 1098234892 or Raast ID"
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono focus:outline-none focus:border-emerald-500"
+                    className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white font-mono focus:outline-none focus:border-emerald-500"
                   />
                 </div>
 
@@ -205,18 +246,17 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
                     type="text"
                     value={receiptNotes}
                     onChange={e => setReceiptNotes(e.target.value)}
-                    placeholder="e.g. Transferred from Meezan mobile app"
-                    className="w-full bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
+                    placeholder="e.g. Transferred from Meezan app"
+                    className="w-full min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500"
                   />
                 </div>
               </div>
 
-              {/* Drag and drop upload area */}
               <div>
                 <label className="block font-semibold text-zinc-300 mb-1.5">
                   Receipt Image or PDF <span className="text-rose-400">*</span>:
                 </label>
-                <div className="border-2 border-dashed border-zinc-700 hover:border-emerald-500 rounded-2xl p-6 text-center bg-zinc-950/60 cursor-pointer transition">
+                <div className="border-2 border-dashed border-zinc-700 hover:border-emerald-500 rounded-2xl p-5 sm:p-6 text-center bg-zinc-950/60 cursor-pointer transition">
                   <input
                     type="file"
                     accept="image/*,application/pdf"
@@ -231,11 +271,11 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
                   />
                   <label htmlFor="receipt-file-input" className="cursor-pointer space-y-2 block">
                     <UploadCloud className="w-8 h-8 text-zinc-400 mx-auto" />
-                    <div className="text-xs font-semibold text-zinc-200">
+                    <div className="text-xs font-semibold text-zinc-200 break-words">
                       {receiptFile ? (
                         <span className="text-emerald-400 font-bold">{receiptFile.name} ({(receiptFile.size / 1024).toFixed(1)} KB)</span>
                       ) : (
-                        <span>Click to browse or drag & drop payment screenshot</span>
+                        <span>Tap to upload payment screenshot</span>
                       )}
                     </div>
                     <div className="text-[11px] text-zinc-500">
@@ -248,7 +288,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
               <button
                 type="submit"
                 disabled={isUploading || !receiptFile}
-                className="w-full py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-zinc-950 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition"
+                className="w-full min-h-[46px] py-3 bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-zinc-950 font-bold text-xs rounded-xl flex items-center justify-center gap-2 transition"
               >
                 {isUploading ? (
                   <span>Uploading to Backblaze B2...</span>
@@ -262,9 +302,9 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
       )}
 
       {/* 3. ORDER DETAILS BREAKDOWN */}
-      <div className="p-6 bg-zinc-900 border border-zinc-800 rounded-3xl space-y-4 text-xs">
+      <div className="p-4 sm:p-6 bg-zinc-900 border border-zinc-800 rounded-2xl sm:rounded-3xl space-y-4 text-xs">
         <h3 className="font-bold text-white text-base font-['Outfit'] pb-3 border-b border-zinc-800">
-          Order Summary & Delivery Address
+          Order Summary &amp; Delivery Address
         </h3>
 
         <div className="grid sm:grid-cols-2 gap-4">
@@ -288,17 +328,17 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
         <div className="pt-3 border-t border-zinc-800 space-y-2">
           <span className="text-zinc-500 font-semibold uppercase tracking-wider text-[10px]">Ordered Phones</span>
           {order.items.map(item => (
-            <div key={item.id} className="p-3 bg-zinc-950 rounded-xl flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <img src={item.image_url} alt={item.product_name} className="w-10 h-10 object-contain rounded" />
-                <div>
-                  <div className="font-bold text-white">{item.product_name}</div>
+            <div key={item.id} className="p-3 bg-zinc-950 rounded-xl flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5 min-w-0 flex-1">
+                <img src={item.image_url} alt={item.product_name} className="w-10 h-10 object-contain rounded flex-shrink-0" />
+                <div className="min-w-0">
+                  <div className="font-bold text-white truncate">{item.product_name}</div>
                   <div className="text-[11px] text-zinc-400">
                     {item.pta_status} • Qty: {item.quantity}
                   </div>
                 </div>
               </div>
-              <div className="font-mono font-bold text-emerald-400">
+              <div className="font-mono font-bold text-emerald-400 flex-shrink-0 tabular-nums">
                 Rs. {item.total_price.toLocaleString('en-PK')}
               </div>
             </div>
@@ -306,7 +346,7 @@ export const OrderConfirmationPage: React.FC<OrderConfirmationPageProps> = ({
         </div>
 
         {/* Total calculation */}
-        <div className="pt-3 border-t border-zinc-800 space-y-1.5 text-right font-mono">
+        <div className="pt-3 border-t border-zinc-800 space-y-1.5 text-right font-mono tabular-nums">
           <div className="text-zinc-400">Subtotal: Rs. {order.subtotal.toLocaleString('en-PK')}</div>
           <div className="text-zinc-400">Delivery: {order.delivery_charges === 0 ? 'FREE' : `Rs. ${order.delivery_charges}`}</div>
           {order.discount_amount > 0 && (

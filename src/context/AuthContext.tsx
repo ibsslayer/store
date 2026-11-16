@@ -19,8 +19,14 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<UserProfile | null>(() => {
-    const saved = localStorage.getItem('pkm_user');
-    return saved ? JSON.parse(saved) : null;
+    try {
+      const saved = localStorage.getItem('pkm_user');
+      return saved ? JSON.parse(saved) : null;
+    } catch {
+      localStorage.removeItem('pkm_user');
+      localStorage.removeItem('pkm_token');
+      return null;
+    }
   });
   const [token, setToken] = useState<string | null>(() => localStorage.getItem('pkm_token'));
   const [isLoading, setIsLoading] = useState(false);
@@ -30,12 +36,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       apiFetch('/api/auth/me', {
         headers: { Authorization: `Bearer ${token}` }
       })
-        .then(res => res.ok ? res.json() : null)
-        .then(data => {
-          if (data) {
-            setUser(data);
-            localStorage.setItem('pkm_user', JSON.stringify(data));
-          } else {
+        .then(async res => {
+          if (res.ok) {
+            const data = await res.json();
+            if (data) {
+              setUser(data);
+              localStorage.setItem('pkm_user', JSON.stringify(data));
+            }
+          } else if (res.status === 401 || res.status === 403) {
             logout();
           }
         })

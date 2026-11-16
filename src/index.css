@@ -1,1 +1,34 @@
 @import "tailwindcss";
+
+@layer base {
+  html,
+  body {
+    background-color: #09090b;
+    color: #f4f4f5;
+    overflow-x: clip;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Prevent iOS Safari automatic zoom when focusing text inputs < 16px */
+  @media (max-width: 767px) {
+    input:not([type='checkbox']):not([type='radio']):not([type='range']),
+    select,
+    textarea {
+      font-size: 16px !important;
+    }
+  }
+}
+
+/* Hide scrollbars on horizontal category/tab scrollers while preserving touch swipe */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Safe-area bottom padding helper for fixed mobile action bars */
+.pb-safe {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+}

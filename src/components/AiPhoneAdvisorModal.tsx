@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { X, Sparkles, Send, ShieldCheck, Phone, CheckCircle2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Sparkles, Send, ShieldCheck } from 'lucide-react';
 import { useSettings } from '../context/SettingsContext';
 import { apiFetch } from '../lib/staticFallback';
 
@@ -21,6 +21,15 @@ export const AiPhoneAdvisorModal: React.FC<AiPhoneAdvisorModalProps> = ({
   const [ptaStatus, setPtaStatus] = useState('PTA Approved');
   const [isLoading, setIsLoading] = useState(false);
   const [aiResponse, setAiResponse] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleEsc);
+    return () => document.removeEventListener('keydown', handleEsc);
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -63,38 +72,45 @@ export const AiPhoneAdvisorModal: React.FC<AiPhoneAdvisorModalProps> = ({
   const waPhone = (settings.whatsapp_number || '+923001234567').replace(/[^0-9]/g, '');
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="bg-zinc-900 border border-zinc-700 w-full max-w-2xl rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-2 sm:p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200"
+      onClick={onClose}
+    >
+      <div
+        onClick={e => e.stopPropagation()}
+        className="bg-zinc-900 border border-zinc-700 w-full max-w-2xl rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[92dvh]"
+      >
         {/* Modal Header */}
-        <div className="p-5 bg-gradient-to-r from-purple-900/80 via-indigo-900/80 to-zinc-900 border-b border-zinc-800 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 animate-pulse" />
+        <div className="p-4 sm:p-5 bg-gradient-to-r from-purple-900/80 via-indigo-900/80 to-zinc-900 border-b border-zinc-800 flex items-center justify-between gap-2 flex-shrink-0">
+          <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+            <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-300 flex items-center justify-center flex-shrink-0">
+              <Sparkles className="w-5 h-5" />
             </div>
-            <div>
-              <h3 className="font-bold text-white text-base font-['Outfit'] flex items-center gap-2">
-                iBs Slayer AI Phone Advisor
-                <span className="text-[10px] px-2 py-0.5 rounded bg-purple-500/30 text-purple-200 border border-purple-500/40 uppercase font-black">
-                  Gemini Powered
+            <div className="min-w-0">
+              <h3 className="font-bold text-white text-sm sm:text-base font-['Outfit'] flex flex-wrap items-center gap-1.5">
+                <span className="truncate">AI Phone Advisor</span>
+                <span className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded bg-purple-500/30 text-purple-200 border border-purple-500/40 uppercase font-black">
+                  Smart Match
                 </span>
               </h3>
-              <p className="text-xs text-purple-200/80">
-                Tailored recommendations for Pakistani market prices, taxes, and cameras.
+              <p className="text-[11px] sm:text-xs text-purple-200/80 truncate">
+                Tailored recommendations for Pakistani market prices &amp; PTA status.
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-1.5 text-zinc-400 hover:text-white rounded-xl hover:bg-white/10 transition"
+            className="min-w-[40px] min-h-[40px] flex items-center justify-center text-zinc-400 hover:text-white rounded-xl hover:bg-white/10 transition flex-shrink-0"
+            aria-label="Close AI Advisor"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Modal Body */}
-        <div className="p-6 overflow-y-auto space-y-5 text-sm text-zinc-300">
+        <div className="p-4 sm:p-6 overflow-y-auto space-y-4 sm:space-y-5 text-sm text-zinc-300">
           {/* Preset Filters */}
-          <div className="grid sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-xs font-semibold text-zinc-400 mb-1.5">
                 Budget in PKR:
@@ -102,7 +118,7 @@ export const AiPhoneAdvisorModal: React.FC<AiPhoneAdvisorModalProps> = ({
               <select
                 value={budget}
                 onChange={e => setBudget(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
+                className="w-full min-h-[42px] bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500"
               >
                 {budgetOptions.map(b => (
                   <option key={b} value={b}>{b}</option>
@@ -117,7 +133,7 @@ export const AiPhoneAdvisorModal: React.FC<AiPhoneAdvisorModalProps> = ({
               <select
                 value={brand}
                 onChange={e => setBrand(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
+                className="w-full min-h-[42px] bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500"
               >
                 {brandOptions.map(b => (
                   <option key={b} value={b}>{b}</option>
@@ -132,10 +148,10 @@ export const AiPhoneAdvisorModal: React.FC<AiPhoneAdvisorModalProps> = ({
               <select
                 value={ptaStatus}
                 onChange={e => setPtaStatus(e.target.value)}
-                className="w-full bg-zinc-950 border border-zinc-700 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-purple-500"
+                className="w-full min-h-[42px] bg-zinc-950 border border-zinc-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-purple-500"
               >
-                <option value="PTA Approved">PTA Approved (100% Tax Paid)</option>
-                <option value="Non-PTA">Non-PTA (Cheaper / Pay Later)</option>
+                <option value="PTA Approved">PTA Approved (Tax Paid)</option>
+                <option value="Non-PTA">Non-PTA (Cheaper)</option>
                 <option value="Any">Either</option>
               </select>
             </div>
@@ -146,18 +162,18 @@ export const AiPhoneAdvisorModal: React.FC<AiPhoneAdvisorModalProps> = ({
             <label className="block text-xs font-semibold text-zinc-400">
               Specific Questions or Use-case (Optional):
             </label>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 value={query}
                 onChange={e => setQuery(e.target.value)}
-                placeholder="e.g. Best battery life for PUBG, or best camera under 150k..."
-                className="flex-1 bg-zinc-950 border border-zinc-700 rounded-xl px-4 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500"
+                placeholder="e.g. Best battery for PUBG or camera under 150k..."
+                className="flex-1 min-h-[44px] bg-zinc-950 border border-zinc-700 rounded-xl px-3.5 py-2.5 text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-purple-500"
               />
               <button
                 type="submit"
                 disabled={isLoading}
-                className="px-5 py-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 transition shadow"
+                className="min-h-[44px] px-5 py-2.5 bg-purple-600 hover:bg-purple-500 disabled:opacity-50 text-white font-bold text-xs rounded-xl flex items-center justify-center gap-1.5 transition shadow flex-shrink-0"
               >
                 {isLoading ? (
                   <span className="animate-spin">⏳</span>
@@ -181,23 +197,23 @@ export const AiPhoneAdvisorModal: React.FC<AiPhoneAdvisorModalProps> = ({
               <div className="text-xs leading-relaxed whitespace-pre-line text-zinc-300 font-sans">
                 {aiResponse}
               </div>
-              <div className="pt-2 border-t border-zinc-800 flex flex-wrap items-center justify-between gap-2">
+              <div className="pt-2 border-t border-zinc-800 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                 <button
                   onClick={() => {
                     onClose();
                     onNavigate('shop');
                   }}
-                  className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-zinc-950 text-xs font-bold rounded-lg transition"
+                  className="min-h-[40px] px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-zinc-950 text-xs font-bold rounded-xl transition"
                 >
-                  Browse Matching Phones in Store →
+                  Browse Matching Phones →
                 </button>
                 <a
-                  href={`https://wa.me/${waPhone}?text=${encodeURIComponent(`Salam! I got an AI recommendation from your website regarding ${budget} phones. Could you share available models?`)}`}
+                  href={`https://wa.me/${waPhone}?text=${encodeURIComponent(`Salam! I got a recommendation from your website regarding ${budget} phones. Could you share available models?`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold"
+                  className="text-xs text-emerald-400 hover:text-emerald-300 font-semibold text-center py-1"
                 >
-                  Chat with Human Agent on WhatsApp
+                  Chat with Agent on WhatsApp
                 </a>
               </div>
             </div>
@@ -210,7 +226,7 @@ export const AiPhoneAdvisorModal: React.FC<AiPhoneAdvisorModalProps> = ({
               Pakistani Buyer Tip:
             </div>
             <p>
-              Non-PTA phones will operate on cellular networks for 60 days upon inserting a Pakistani SIM card. After 60 days, PTA customs duty must be deposited through DIRBS or Bank voucher. All "PTA Approved" phones on iBs Slayer are already 100% duty cleared.
+              Non-PTA phones operate on cellular networks for 60 days upon inserting a Pakistani SIM card. All &ldquo;PTA Approved&rdquo; phones on iBs Slayer are 100% duty cleared.
             </p>
           </div>
         </div>
